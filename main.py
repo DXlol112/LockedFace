@@ -1,22 +1,35 @@
 import numpy as np
 import cv2
-import sys
-eyeCascade = cv2.CascadeClassifier(cascPath)
-cam = cv2.VideoCapture(0)
+from PyQt6.QtWidgets import QApplication, QWidget
+
+cap = cv2.VideoCapture(0)
+face_cascade_db = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+eye_cascade_db = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+
+if not cap.isOpened():
+    print('Нет камеры')
 
 while True:
-    ret, frame = cam.read()
-    roi = frame[269:795, 200:600]
-    gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+    ret, frame = cap.read()
     
-    eyes = c
+    if not ret:
+        print("404")
+        exit() 
 
-    _, threshold = cv2.threshold(gray_roi, 5, 255, cv2.THRESH_BINARY_INV)
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    cv2.imshow('frame', threshold)
-    key = cv2.waitKey(30)
-    if key == 27:
+    face = face_cascade_db.detectMultiScale(gray, 1.1, 19)
+    for (x,y,w,h) in face:
+        cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
+
+    eye = eye_cascade_db.detectMultiScale(gray, 1.1, 19)
+    for (x,y,w,h) in eye:
+        cv2.rectangle(frame, (x,y), (x+w,y+h), (255,0,0), 2)
+        
+    cv2.imshow('frame', frame)
+    
+    if cv2.waitKey(1) == ord('q'):
         break
 
-
+cap.release()
 cv2.destroyAllWindows()
