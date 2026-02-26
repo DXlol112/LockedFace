@@ -18,17 +18,24 @@ while True:
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
+    #лицо
     face = face_cascade_db.detectMultiScale(gray, 1.1, 19)
     for (x,y,w,h) in face:
         cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
 
-    eye = eye_cascade_db.detectMultiScale(gray, 1.1, 19)
-    for (x,y,w,h) in eye:
-        cv2.rectangle(frame, (x,y), (x+w,y+h), (255,0,0), 2)
-        
+        #глаза
+        gray_fase = gray[y:y+h,x:x+w]
+        eyes = eye_cascade_db.detectMultiScale(gray_fase, 1.1, 19)
+        for (ex, ey, ew, eh) in eyes:
+            cv2.rectangle(frame, (x+ex, y+ey),(x+ex + ew, y+ey + eh), (255,0,0), 2)
+
+
+        if len(eyes) == 0:
+            print('не видно')
+
     cv2.imshow('frame', frame)
-    
-    if cv2.waitKey(1) == ord('q'):
+
+    if cv2.waitKey(1) & 0xff == ord('q'):
         break
 
 cap.release()
