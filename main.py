@@ -1,18 +1,33 @@
 import numpy as np
+import pathlib as pl
 import cv2
 from PyQt6.QtWidgets import QApplication, QWidget
 import time
 
-def time_input(time_user):
-    pass
+def time_input()-> int: #ввод времини
+    try:
+        time_inp = int(input("Введите время работы: "))
+        return time_inp
+    except ValueError:
+        print("Время ведено неправильно: ")
+        return 0
 
-def base_program():
+def select_img_or_mp4()-> str:
+    img_or_mp4 = []
+
+
+
+
+def base_program(time_inp:int,img_or_mp4:str)->None:
     cap = cv2.VideoCapture(0)
     face_cascade_db = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     eye_cascade_db = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
 
     if not cap.isOpened():
         print('Нет камеры')
+
+    start_time = time.time()
+
 
     while True:
         ret, frame = cap.read()
@@ -36,12 +51,14 @@ def base_program():
                 cv2.rectangle(frame, (x+ex, y+ey),(x+ex + ew, y+ey + eh), (255,0,0), 2)
 
                 if len(eyes) < 2:
-                    print("Глаз не видно")
+                    cv2.imshow('violation')
 
 
         cv2.imshow('frame', frame)
 
-        if cv2.waitKey(1) & 0xff == ord('q'):
+        close_time = time.time() - start_time
+
+        if cv2.waitKey(1) & 0xff == ord('q') or time_inp > close_time:
             break
 
     cap.release()
@@ -49,8 +66,9 @@ def base_program():
     return # конец
 
 def main():
-    base_program()
-
+    time_inp = time_input()
+    if time_inp > 0:
+        base_program(time_inp)
 
 if __name__ == '__main__':
     main()
