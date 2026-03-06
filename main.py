@@ -1,5 +1,3 @@
-from idlelib.outwin import file_line_pats
-
 import numpy as np
 import pathlib as pl
 import cv2
@@ -37,79 +35,85 @@ def select_media_user():
     media_dir = user_dir / "project_media"
 
     files = sorted([f for f in media_dir.iterdir() if f.is_file()])
-    files_dict = sorted({f"{i}: {f.name}" for i, f in enumerate(files, 1)})
 
-    print("Выберете файл:"'\n'.join(files_dict))
-    input_user =  int(input("Ваш выбор: "))
-    return files_dict[input_user-1]
+    print("Выберите файл")
+    for i, f in enumerate(files, 1):
+        print(f"{i}. {f.name}")
 
-print(select_media_user()) ##
-
-
+    try:
+        input_user = int(input("Ваш выбор: "))
+        return str(files[input_user-1])
+    except (ValueError, IndexError):
+        print("Ошибка выбора")
+        return select_media_user()
 
 def time_input()-> int: #ввод времини. #обеденить в одном UI
     pass
 
-def base_program(time_inp:int,img_or_mp4:str)->None: #Основа програмы
+
+def base_program(time_inp: int, img_or_mp4: str) -> None:  # Основа програмы
     cap = cv2.VideoCapture(0)
+
+    violation_img = cv2.imread(img_or_mp4)
+
     face_cascade_db = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     eye_cascade_db = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
 
     if not cap.isOpened():
         print('Нет камеры')
+        return
 
     start_time = time.time()
 
-
     while True:
         ret, frame = cap.read()
-
         if not ret:
             print("404")
             break
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        #лицо
-        face = face_cascade_db.detectMultiScale(gray, 1.1, 19,minSize=(100, 100))
-        if len(face) > 0:
-            (x, y, w, h) = face[0]
-            cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
+        faces = face_cascade_db.detectMultiScale(gray, 1.1, 19, minSize=(100, 100))
 
-            #глаза
-            gray_fase = gray[y:y+h,x:x+w]
-            eyes = eye_cascade_db.detectMultiScale(gray_fase, 1.1, 19, minSize=(40, 40))
-            for (ex, ey, ew, eh) in eyes:
-                cv2.rectangle(frame, (x+ex, y+ey),(x+ex + ew, y+ey + eh), (255,0,0), 2)
+        if len(faces) > 0:
+            (x, y, w, h) = faces[0]
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-                if len(eyes) < 2:
-                    cv2.imshow('violation',img_or_mp4)
+            gray_roi = gray[y:y + h, x:x + w]
+            eyes = eye_cascade_db.detectMultiScale(gray_roi, 1.1, 19, minSize=(40, 40))
 
+            if len(eyes) < 2 and violation_img is not None:
+                cv2.imshow("ALARM", violation_img)
+            else:
+                try:
+                    if cv2.getWindowProperty("ALARM", cv2.WND_PROP_VISIBLE) >= 0:
+                        cv2.destroyWindow("ALARM")
+                except cv2.error:
+                    pass
 
-        cv2.imshow('frame', frame)
+        cv2.imshow("Frame", frame)
 
         close_time = time.time() - start_time
-        if cv2.waitKey(1) & 0xff == ord('q') or time_inp > close_time:
+        if cv2.waitKey(1) & 0xff == ord('q') or close_time > time_inp:
             break
 
     cap.release()
     cv2.destroyAllWindows()
     return # конец
 
-#def main():
+def main():
     app = qtw.QApplication(sys.argv)
     file_path = select_img_or_mp4()
 
     if file_path:
-        local_path = save_file_path_on_disk(file_path)
+        local_path = save_file_path_on_disk(file_path) #
 
     media_user = select_media_user()
 
-    time_inp = 100  ###time_input()
+    time_inp = 100000000  ###time_input()
     if time_inp > 0:
         base_program(time_inp, media_user)
-        pass
 
-#if __name__ == '__main__':
+
+if __name__ == '__main__':
     main()
-
