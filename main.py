@@ -43,7 +43,7 @@ def select_media_user():
     input_user =  int(input("Ваш выбор: "))
     return files_dict[input_user-1]
 
-print(select_media_user())
+print(select_media_user()) ##
 
 
 
