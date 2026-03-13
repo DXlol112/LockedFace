@@ -104,19 +104,19 @@ def base_program(time_inp: int, img_or_mp4: str) -> None:  # Основа про
     cv2.destroyAllWindows()
     return # конец
 
-def main():
-    app = qtw.QApplication(sys.argv)
-    file_path = select_img_or_mp4()
-
-    if file_path:
-        local_path = save_file_path_on_disk(file_path) #
-
-    media_user = select_media_user()
-
-    time_inp = 100000000  ###time_input()
-    if time_inp > 0:
-        base_program(time_inp, media_user)
-
-
-if __name__ == '__main__':
-    main()
+# def main():
+#     app = qtw.QApplication(sys.argv)
+#     file_path = select_img_or_mp4()
+#
+#     if file_path:
+#         local_path = save_file_path_on_disk(file_path) #
+#
+#     media_user = select_media_user()
+#
+#     time_inp = 100000000  ###time_input()
+#     if time_inp > 0:
+#         base_program(time_inp, media_user)
+#
+#
+# if __name__ == '__main__':
+#     main()
