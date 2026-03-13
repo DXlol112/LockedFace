@@ -8,7 +8,7 @@ class HelloMainWindow(qtw.QMainWindow):
         self.setWindowTitle("Maintaining-attention-at-work")
         self.setGeometry(100,100, 800, 600)
         self.setWindowIcon(QIcon('app_icon.jpg'))
-        self.
+
 
 
 app = qtw.QApplication([])
