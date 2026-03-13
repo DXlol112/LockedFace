@@ -8,7 +8,7 @@ import os
 import shutil
 
 def select_img_or_mp4()-> str: # выбор фала для ошибки пользоватьеля #сделать ситему сохронения при выходе из приложения
-    file_path, _ = qtw.QFileDialog.getOpenFileName(None, "Выберете файл", "", "Image/Video (*.jpg *.png *.mp4 *.avi)")
+    file_path, _ = qtw.QFileDialog.getOpenFileName(None, "Выберете файл", "", "Image/Video (*.jpg *.png *.mp4 *.webp)")
     return file_path
 
 def save_file_path_on_disk(file_path:str)-> str:
@@ -47,8 +47,8 @@ def select_media_user():
         print("Ошибка выбора")
         return select_media_user()
 
-def time_input()-> int: #ввод времини. #обеденить в одном UI
-    pass
+# def time_input()-> int: #ввод времини. #обеденить в одном UI
+#     pass
 
 
 def base_program(time_inp: int, img_or_mp4: str) -> None:  # Основа програмы
@@ -56,8 +56,8 @@ def base_program(time_inp: int, img_or_mp4: str) -> None:  # Основа про
 
     violation_img = cv2.imread(img_or_mp4)
 
-    face_cascade_db = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-    eye_cascade_db = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+    face_cascade_db = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml') # type: ignore
+    eye_cascade_db = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml') # type: ignore
 
     if not cap.isOpened():
         print('Нет камеры')
@@ -80,22 +80,25 @@ def base_program(time_inp: int, img_or_mp4: str) -> None:  # Основа про
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
             gray_roi = gray[y:y + h, x:x + w]
-            eyes = eye_cascade_db.detectMultiScale(gray_roi, 1.1, 19, minSize=(40, 40))
+            color_roi = frame[y:y + h, x:x + w]
+            eyes = eye_cascade_db.detectMultiScale(gray_roi, 1.1, 19, minSize=(40, 40))            
+            for (ex, ey, ew, eh) in eyes:
+                cv2.rectangle(color_roi, (ex, ey), (ex + ew, ey + eh), (255, 0, 0), 2)
 
-            if len(eyes) < 2 and violation_img is not None:
+            if len(eyes) == 0 and violation_img is not None:
                 cv2.imshow("ALARM", violation_img)
             else:
                 try:
-                    if cv2.getWindowProperty("ALARM", cv2.WND_PROP_VISIBLE) >= 0:
+                    if cv2.getWindowProperty("ALARM", cv2.WND_PROP_VISIBLE) >= 1:
                         cv2.destroyWindow("ALARM")
-                except cv2.error:
+                except:
                     pass
 
-        cv2.imshow("Frame", frame)
+            cv2.imshow("Frame", frame)
 
-        close_time = time.time() - start_time
-        if cv2.waitKey(1) & 0xff == ord('q') or close_time > time_inp:
-            break
+            close_time = time.time() - start_time
+            if cv2.waitKey(1) & 0xff == ord('q') or close_time > time_inp:
+                break
 
     cap.release()
     cv2.destroyAllWindows()
