@@ -2,7 +2,7 @@ import sys
 from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QFont, QIcon
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget,QLabel, QVBoxLayout
-from script.def_collection import *
+from script.scr.def_collection import *
 
 class MainWindow(QMainWindow):
     def __init__(self):
