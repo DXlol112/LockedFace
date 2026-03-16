@@ -47,7 +47,7 @@ def select_media_user():
         print(f"{i}. {f.name}")
 
     try:
-        input_index = int(input("Введите номер файла: ")) - 1
+        input_index = int(input("Введите номер файла: "))
         return str(files[input_index-1])
     
     except (ValueError, IndexError):
@@ -73,6 +73,8 @@ def base_program(time_inp: int, img_or_mp4: str, gaze_off_or_on: int) -> None:  
     eyes_closed_time = None
     face_not_detected_time = None
     gaze_time = None
+
+    
     
     if not cap.isOpened():
         print('Нет камеры')
@@ -151,6 +153,7 @@ def base_program(time_inp: int, img_or_mp4: str, gaze_off_or_on: int) -> None:  
             
                 
         cv2.imshow("Frame", frame)
+        cv2.resizeWindow("Frame", 800, 600)
         close_time = time.time() - start_time
         if cv2.waitKey(1) & 0xff == ord('q') or close_time > time_inp:
             break
