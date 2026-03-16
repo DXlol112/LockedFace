@@ -6,16 +6,35 @@ import time
 import shutil
 import sys
 
-def select_img_or_mp4_save()-> str: # выбор фала для ошибки пользоватьеля #сделать ситему сохронения при выходе из приложения
+def select_img_or_mp4_save()-> str|None: # выбор фала для ошибки пользоватьеля #сделать ситему сохронения при выходе из приложения
     file_path, _ = qtw.QFileDialog.getOpenFileName(None, "Выберете файл", "", "Image/Video (*.jpg *.png *.mp4 *.webp)")
-    return file_path
+    if not file_path:
+        return None
+    
+    src_path = pl.Path(file_path)
 
+    project_dir = pl.Path(__file__).resolve().parent.parent.parent
+    
+    media_dir = project_dir / "media"
+    media_dir.mkdir(exist_ok=True)
+
+    dest_path = media_dir / src_path.name
+
+    if dest_path.exists():
+        return str(dest_path)
+
+    try:
+        shutil.copy(file_path, dest_path)
+        return str(dest_path)
+    
+    except Exception as e:
+        print(f"Ошибка при копировании файла: {e}")
+        return None
+    
 
 def select_media_user():
     user_dir = pl.Path(__file__).resolve().parent.parent.parent
     media_dir = user_dir / "media"
-
-    media_dir.mkdir(exist_ok=True)
 
     files = sorted([f for f in media_dir.iterdir() if f.is_file()])
 
@@ -66,7 +85,7 @@ def base_program(time_inp: int, img_or_mp4: str) -> None:  # Основа про
             break
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade_db.detectMultiScale(gray, 1.1, 10, minSize=(80, 80), maxSize=(100, 100))
+        faces = face_cascade_db.detectMultiScale(gray, 1.1, 10, minSize=(80, 80))
 
         if len(faces) > 0:
             (x, y, w, h) = faces[0]
@@ -81,7 +100,7 @@ def base_program(time_inp: int, img_or_mp4: str) -> None:  # Основа про
             gray_roi = gray[y:y + h, x:x + w]
             color_roi = frame[y:y + h, x:x + w]
 
-            eyes = eye_cascade_db.detectMultiScale(gray_roi, 1.1, 20, minSize=(40, 40), maxSize=(50, 50))            
+            eyes = eye_cascade_db.detectMultiScale(gray_roi, 1.1, 20, minSize=(10, 10))            
             
             if len(eyes) > 0:    
                 for (ex, ey, ew, eh) in eyes[:2]:
@@ -121,7 +140,7 @@ def base_program(time_inp: int, img_or_mp4: str) -> None:  # Основа про
 
 def main():
     app = qtw.QApplication(sys.argv)
-    file_path = select_img_or_mp4_save()
+    path = select_img_or_mp4_save()
     media_user = select_media_user()
 
     time_inp = 100000000  ###time_input()
