@@ -57,7 +57,7 @@ def select_media_user():
 #     pass
 
 
-def base_program(time_inp: int, img_or_mp4: str) -> None:  # Основа програмы
+def base_program(time_inp: int, img_or_mp4: str, gaze_off_or_on: int) -> None:  # Основа програмы
     cap = cv2.VideoCapture(0)
 
     violation_img = cv2.imread(img_or_mp4)
@@ -72,12 +72,12 @@ def base_program(time_inp: int, img_or_mp4: str) -> None:  # Основа про
 
     eyes_closed_time = None
     face_not_detected_time = None
+    gaze_time = None
     
     if not cap.isOpened():
         print('Нет камеры')
         return
 
-    
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -85,7 +85,7 @@ def base_program(time_inp: int, img_or_mp4: str) -> None:  # Основа про
             break
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade_db.detectMultiScale(gray, 1.1, 10, minSize=(80, 80))
+        faces = face_cascade_db.detectMultiScale(gray, 1.1, 10, minSize=(100, 100))
 
         if len(faces) > 0:
             (x, y, w, h) = faces[0]
@@ -100,12 +100,33 @@ def base_program(time_inp: int, img_or_mp4: str) -> None:  # Основа про
             gray_roi = gray[y:y + h, x:x + w]
             color_roi = frame[y:y + h, x:x + w]
 
-            eyes = eye_cascade_db.detectMultiScale(gray_roi, 1.1, 20, minSize=(10, 10))            
+            eyes = eye_cascade_db.detectMultiScale(gray_roi, 1.1, 20, minSize=(30, 30))            
             
             if len(eyes) > 0:    
                 for (ex, ey, ew, eh) in eyes[:2]:
                     cv2.rectangle(color_roi, (ex, ey), (ex + ew, ey + eh), (255, 0, 0), 2)
                 
+                    if gaze_off_or_on == 1:
+                        
+                        gaze = detect_gaze(color_roi[ey:ey + eh, ex:ex + ew])
+                        cv2.rectangle(color_roi, (ex, ey), (ex + ew, ey + eh), (255, 0, 0), 2)
+
+                        if gaze != "Center":
+
+                            if gaze_time is None:
+                                gaze_time = time.time()
+                            
+                            elif time.time() - gaze_time > 2:
+                                cv2.imshow("Violation_eyes", violation_img)
+                            
+                        else:
+                            gaze_time = None
+                            try:
+                                cv2.destroyWindow("Violation_eyes")
+                            except:
+                                pass
+
+
                 eyes_closed_time = None
                 try:
                     cv2.destroyWindow("Violation_eyes")
@@ -138,6 +159,26 @@ def base_program(time_inp: int, img_or_mp4: str) -> None:  # Основа про
     cv2.destroyAllWindows()
     return # конец
 
+
+def detect_gaze(gray_roi):# доп функция для определения направления взгляда. #дополнить и улучшить
+    gray_roi = cv2.cvtColor(gray_roi, cv2.COLOR_BGR2GRAY)
+    gray_roi = cv2.GaussianBlur(gray_roi, (7, 7), 0)
+
+    _, thresh = cv2.threshold(gray_roi, 50, 255, cv2.THRESH_BINARY_INV)
+
+    h, w = thresh.shape
+
+    left_white = cv2.countNonZero(thresh[:, :int(w / 2)])
+    right_white = cv2.countNonZero(thresh[:, int(w/2):w])
+
+    if left_white > right_white:
+        return "Right"
+    elif right_white > left_white:
+        return "Left"
+    else:
+        return "Center"
+        
+
 def main():
     app = qtw.QApplication(sys.argv)
     path = select_img_or_mp4_save()
@@ -145,7 +186,13 @@ def main():
 
     time_inp = 100000000  ###time_input()
     if time_inp > 0:
-        base_program(time_inp, media_user)
+        try:
+            gaze_off_or_on = int(input("Включить определение направления взгляда? (1 - да, 0 - нет): "))
+        except ValueError:
+            print("Некорректный ввод. Выключение определения направления взгляда по умолчанию.")
+            gaze_off_or_on = 0
+
+        base_program(time_inp, media_user, gaze_off_or_on)
 
 
 if __name__ == '__main__':
