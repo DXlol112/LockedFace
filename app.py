@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.stack)
 
         self.start_page = StartPage(self.go_to_main)
-        self.main_page = MainPage()
+        self.main_page = MainPage(self.start_program)
 
         self.stack.addWidget(self.start_page)
         self.stack.addWidget(self.main_page)

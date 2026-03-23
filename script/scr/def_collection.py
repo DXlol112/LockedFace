@@ -53,8 +53,12 @@ def select_media_user():
     except (ValueError, IndexError):
         print("Ошибка выбора")
         return select_media_user()
-# def time_input()-> int: #ввод времини. #обеденить в одном UI
-#     pass
+
+# def update_time(h, m, s, dh=0, dm=0, ds=0): #ввод времини. #обеденить в одном UI
+#     h = (h + dh) % 24
+#     m = (m + dm) % 60
+#     s = (s + ds) % 60 
+#     return h, m, s
 
 
 def base_program(time_inp: int, img_or_mp4: str, gaze_off_or_on: int) -> None:  # Основа програмы
