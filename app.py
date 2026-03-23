@@ -1,48 +1,38 @@
 import sys
-from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QFont, QIcon
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget,QLabel, QVBoxLayout
-from script.scr.def_collection import *
-import numpy as np
-import pathlib as pl
-import cv2
-import time
-import shutil
+from PyQt6.QtWidgets import QApplication, QStackedWidget, QMainWindow
+from PyQt6.QtGui import QIcon
+from pathlib import Path
 
+from script.UI.start_page import StartPage
+from script.UI.main_page import MainPage
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
         self.setWindowTitle("Maintaining attention at work")
-        self.setWindowIcon(QIcon("icon/app_icon.jpg"))
-        self.setFixedSize(QSize(800, 600))
+        self.setWindowIcon(QIcon("static/icon/app_icon.png"))
+        self.setFixedSize(800, 600)
 
-        container = QWidget()
-        self.setCentralWidget(container)
+        self.stack = QStackedWidget()
+        self.setCentralWidget(self.stack)
 
-        layout = QVBoxLayout()
-        container.setLayout(layout)
+        self.start_page = StartPage(self.go_to_main)
+        self.main_page = MainPage()
 
-        self.label = QLabel("Перед использованием программы\n " \
-        "Настройте камеру и освещение так, чтобы ваше лицо было хорошо видно." \
-        "Поставьте камеру прямо перед собой на уровне глаз, " \
-        "направьте её ровно на лицо и убедитесь, " \
-        "что освещение достаточно яркое, чтобы ваше лицо было хорошо видно. Избегайте сильного контрового света и теней на лице.")
-        
-        self.label.setFont(QFont('Arial', 16))
-        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.stack.addWidget(self.start_page)
+        self.stack.addWidget(self.main_page)
 
-        self.button = QPushButton("Продолжить")
-        self.button.setFixedSize(200,50)
+    def go_to_main(self):
+        self.stack.setCurrentWidget(self.main_page)
 
-        layout.addWidget(self.label)
-        layout.addWidget(self.button, alignment=Qt.AlignmentFlag.AlignCenter)
+    def start_program(self):
+        print("Start program")
 
 def load_stylesheet(app):
-    with open("script/style/MainWindow.qss", "r") as f:
+    
+    with open(Path(__file__).resolve().parent / "script/style/MainWindow.qss", "r") as f:
         app.setStyleSheet(f.read())
-
 
 app = QApplication(sys.argv)
 

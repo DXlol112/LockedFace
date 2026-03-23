@@ -1,21 +1,33 @@
 QMainWindow {
-    background-color: #ff242222;
+    background-color: #323232;
+    font-family: Inter;
 }
 
-QLabel {
-    color: #ddd;
+#text_title {
+    color: #EDE9E9;
+    font-size: 36px;
+    font-weight: bold;
+
+}
+#text {
+    color: #EDE9E9;
+    font-size: 20px;
+    font-weight: normal;
+
+}
+#continue_btn {
+    background-color: #6E6F72;
+    color: #EDE9E9;
+    border-radius: 18px;
+    padding: 10px 20px;
     font-size: 24px;
     font-weight: bold;
+
+
 }
-QPushButton {
-    background-color: #2d89ef;
-    color: #fff;
-    font-size: 18px;
-    border-radius: 10px;
+#continue_btn:hover {
+    background-color: #777777;
 }
-QPushButton:hover {
-    background-color: #1b5fbf;
-}
-QPushButton:pressed {
-    background-color: #144a96;
+#continue_btn:pressed {
+    background-color: #555555;
 }
