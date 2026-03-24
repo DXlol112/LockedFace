@@ -19,10 +19,12 @@ class MainPage(QWidget):
     
     #-------------------------header-------------------------------#  
         header = QHBoxLayout()
+        header.setObjectName("header")
 
         self.file_btn = QPushButton()
         self.file_btn.setObjectName("icon_btn")
         self.file_btn.setIcon(QIcon("static/btn_icon/file_path.png"))
+        
 
         self.setting_btn = QPushButton()
         self.setting_btn.setObjectName("icon_btn")
@@ -36,6 +38,7 @@ class MainPage(QWidget):
         time_layout = QVBoxLayout()
 
         arrows_top = QHBoxLayout()
+        timer_box = QHBoxLayout()
         arrows_bottom = QHBoxLayout()
 
 
@@ -48,6 +51,7 @@ class MainPage(QWidget):
         arrows_top.addWidget(self.up_s)
 
         self.time_label = QLabel("00:00:00")
+        timer_box.addWidget(self.time_label)
         self.time_label.setObjectName("timer")
 
         time_layout.addWidget(self.time_label, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -61,6 +65,7 @@ class MainPage(QWidget):
         arrows_bottom.addWidget(self.down_s)
 
         time_layout.addLayout(arrows_top)
+        time_layout.addLayout(timer_box)
         time_layout.addLayout(arrows_bottom)
 
         #------------------Footer------------------------#
@@ -74,8 +79,13 @@ class MainPage(QWidget):
         self.info.setObjectName("text_info_file")
         self.info.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
+        self.ver = QLabel("Версия: 1.0.0")
+        self.ver.setObjectName("ver")
+        self.ver.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
         footer.addWidget(self.start_btn, alignment=Qt.AlignmentFlag.AlignCenter)
         footer.addWidget(self.info)
+        footer.addWidget(self.ver)
 
         #---------------ALL--------------------#
         main_layout.addLayout(header)
