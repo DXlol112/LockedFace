@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import (
     QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
 )
-from PyQt6.QtCore import Qt, QPropertyAnimation, QRect
+from PyQt6.QtCore import Qt, QPropertyAnimation, QRect, QSize
 from PyQt6.QtGui import QIcon
 
 
@@ -18,17 +18,22 @@ class MainPage(QWidget):
         main_layout = QVBoxLayout(self)
     
     #-------------------------header-------------------------------#  
-        header = QHBoxLayout()
-        header.setObjectName("header")
+        header_widget = QWidget()
+        header_widget.setObjectName("header")
+        header_widget.setFixedHeight(60)
+
+        header = QHBoxLayout(header_widget)
 
         self.file_btn = QPushButton()
         self.file_btn.setObjectName("icon_btn")
         self.file_btn.setIcon(QIcon("static/btn_icon/file_path.png"))
+        self.file_btn.setIconSize(QSize(53, 53))
         
 
         self.setting_btn = QPushButton()
         self.setting_btn.setObjectName("icon_btn")
         self.setting_btn.setIcon(QIcon("static/btn_icon/setting.png"))
+        self.setting_btn.setIconSize(QSize(53, 53))
 
         header.addStretch()
         header.addWidget(self.file_btn)
@@ -51,10 +56,10 @@ class MainPage(QWidget):
         arrows_top.addWidget(self.up_s)
 
         self.time_label = QLabel("00:00:00")
-        timer_box.addWidget(self.time_label)
+        timer_box.addWidget(self.time_label, alignment=Qt.AlignmentFlag.AlignCenter)
         self.time_label.setObjectName("timer")
 
-        time_layout.addWidget(self.time_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        
 
         self.down_h = self.create_arrow("▼", self.dec_h)
         self.down_m = self.create_arrow("▼", self.dec_m)
@@ -88,7 +93,7 @@ class MainPage(QWidget):
         footer.addWidget(self.ver)
 
         #---------------ALL--------------------#
-        main_layout.addLayout(header)
+        main_layout.addWidget(header_widget)
         main_layout.addStretch()
         main_layout.addLayout(time_layout)
         main_layout.addStretch()

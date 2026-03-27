@@ -1,6 +1,8 @@
 QMainWindow {
     background-color: #323232;
     font-family: Inter;
+    padding: 0px;
+    margin: 0px;
 }
 
 
@@ -40,17 +42,20 @@ QMainWindow {
 
 #header {
     background-color: #252323;
+    padding: 0px;
+    margin: 0px;
 }
-
-
 #icon_btn {
     background: transparent;
     border: none;
 }
-
-
-
-
+#icon_btn:hover {
+    background-color: #2A2A2A;
+    border-radius: 4px;
+}
+#icon_btn:prassed {
+    background-color: #3A3A3A;
+}
 
 #timer {
     font-size: 96px;
