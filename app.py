@@ -5,7 +5,6 @@ from pathlib import Path
 
 from script.UI.start_page import StartPage
 from script.UI.main_page import MainPage
-from script.UI.settings_page import SettingsPage
 
 class MainWindow(QMainWindow):
     def __init__(self):

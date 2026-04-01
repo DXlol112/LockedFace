@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QPropertyAnimation, QRect, QSize
 from PyQt6.QtGui import QIcon
 
+from script.UI.settings_page import SettingsPage
 
 class MainPage(QWidget):
     def __init__(self,on_start):
@@ -16,6 +17,8 @@ class MainPage(QWidget):
         self.s = 0 
         
         main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
     
     #-------------------------header-------------------------------#  
         header_widget = QWidget()
@@ -29,7 +32,6 @@ class MainPage(QWidget):
         self.file_btn.setIcon(QIcon("static/btn_icon/file_path.png"))
         self.file_btn.setIconSize(QSize(53, 53))
         
-
         self.setting_btn = QPushButton()
         self.setting_btn.setObjectName("icon_btn")
         self.setting_btn.setIcon(QIcon("static/btn_icon/setting.png"))
@@ -41,11 +43,12 @@ class MainPage(QWidget):
 
         #-------------------timer-----------------------------------#
         time_layout = QVBoxLayout()
+        time_layout.setSpacing(5)
+        time_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         arrows_top = QHBoxLayout()
         timer_box = QHBoxLayout()
         arrows_bottom = QHBoxLayout()
-
 
         self.up_h = self.create_arrow("▲", self.inc_h)
         self.up_m = self.create_arrow("▲", self.inc_m)
@@ -59,11 +62,11 @@ class MainPage(QWidget):
         timer_box.addWidget(self.time_label, alignment=Qt.AlignmentFlag.AlignCenter)
         self.time_label.setObjectName("timer")
 
-        
-
         self.down_h = self.create_arrow("▼", self.dec_h)
         self.down_m = self.create_arrow("▼", self.dec_m)
         self.down_s = self.create_arrow("▼", self.dec_s)
+
+        
 
         arrows_bottom.addWidget(self.down_h)
         arrows_bottom.addWidget(self.down_m)
@@ -75,6 +78,8 @@ class MainPage(QWidget):
 
         #------------------Footer------------------------#
         footer = QVBoxLayout()
+        footer.setSpacing(0)
+        footer.setContentsMargins(0,0,0,10)
 
         self.start_btn = QPushButton("СТАРТ")
         self.start_btn.setObjectName("start_btn")
@@ -90,14 +95,16 @@ class MainPage(QWidget):
 
         footer.addWidget(self.start_btn, alignment=Qt.AlignmentFlag.AlignCenter)
         footer.addWidget(self.info)
+        footer.addStretch()
         footer.addWidget(self.ver)
 
         #---------------ALL--------------------#
         main_layout.addWidget(header_widget)
-        main_layout.addStretch()
+        main_layout.addSpacing(10)
         main_layout.addLayout(time_layout)
-        main_layout.addStretch()
+        main_layout.addSpacing(20)
         main_layout.addLayout(footer)
+
 
         #--------------------------------------------#
     def create_arrow(self, text, func):

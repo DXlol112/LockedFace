@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout
 from PyQt6.QtCore import Qt
 
+
 class StartPage(QWidget):
     def __init__(self, on_continue) -> None:
         super().__init__()
