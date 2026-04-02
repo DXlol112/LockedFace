@@ -132,9 +132,9 @@ class MainPage(QWidget):
 
     #-------------------------------------#
     def start_cliced(self):
-        self.animate_and_start()
+        self.animate_and_start(self.on_start)
         
-    def animate_and_start(self):
+    def animate_and_start(self, gaze_of_or_on):
         self.anim = QPropertyAnimation(self, b"geometry")
         self.anim.setDuration(500)
 

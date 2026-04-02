@@ -61,7 +61,7 @@ QMainWindow {
 #arrow_btn {
     border: none;
     background-color: transparent;
-    font-size: 64px
+    font-size: 64px;
 
 }
 #arrow_btn:hover{
@@ -105,4 +105,57 @@ QMainWindow {
 #ver {
     padding-bottom: 5px;
 }
+/*settings_page*/
+#header_sett {
+    background-color: #252323;
+    padding: 0px;
+    margin: 0px;
+}
+#back_btn {
+    background-color: transparent;
+    border: none;
+}
+#back_btn:hover {
+    background-color: #2A2A2A;
+    border-radius: 4px;
+}
+#back_btn:pressed {
+    background-color: #3A3A3A;
+}
+#ver_set, #name_set {
+    color: #FFFFFF;
+    font-weight: 900;
+    font-size: 20px;
+    pozition: flex;
+    right: 10px;
+}
+#text_settengs {
+    color: #EDE9E9;
+    font-size: 20px;
+}
+#settings_btn {
+    border: none;
+    background-color: transparent;
+    position: flex;
 
+}
+#toggle_btn {
+    width: 60px;
+    height: 30px;
+}
+#toggle_btn::indicator {
+    width: 60px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: #777;
+}
+#toggle_btn::indicator:checked {
+    background-color: #4cd964;
+}
+#toggle_btn::indicator:unchecked {
+    background-color: #777;
+}
+#toggle_btn::indicator {
+    image: none;
+    border: none;
+}
