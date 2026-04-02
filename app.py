@@ -5,6 +5,7 @@ from pathlib import Path
 
 from script.UI.start_page import StartPage
 from script.UI.main_page import MainPage
+from script.UI.settings_page import SettingsPage
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -18,12 +19,20 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.stack)
 
         self.start_page = StartPage(self.go_to_main)
-        self.main_page = MainPage(self.start_program)
+        self.main_page = MainPage(self.start_program, self.go_to_settings)
+        self.settings_page = SettingsPage(self.go_back)
 
         self.stack.addWidget(self.start_page)
         self.stack.addWidget(self.main_page)
+        self.stack.addWidget(self.settings_page)
 
     def go_to_main(self):
+        self.stack.setCurrentWidget(self.main_page)
+
+    def go_to_settings(self):
+        self.stack.setCurrentWidget(self.settings_page)
+    
+    def go_back(self):
         self.stack.setCurrentWidget(self.main_page)
 
     def start_program(self):

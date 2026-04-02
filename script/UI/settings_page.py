@@ -44,6 +44,8 @@ class SettingsPage(QWidget):
         self.ver = QLabel("Версия: 1.0.0")
         self.ver.setObjectName("ver")
     
+    #----------------------ALL-------------------------#
+    
         
 
     
