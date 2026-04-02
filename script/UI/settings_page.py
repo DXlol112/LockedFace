@@ -1,8 +1,13 @@
 from PyQt6.QtWidgets import (
-    QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QCheckBox
+    QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QCheckBox, QDialog
 )
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QIcon, QPixmap
+
+import json
+import requests
+import webbrowser
+from pathlib import Path
 
 
 class SettingsPage(QWidget):
@@ -94,7 +99,7 @@ class SettingsPage(QWidget):
 
         self.toggle_btn = QCheckBox()
         self.toggle_btn.setObjectName("toggle_btn")
-        self.toggle_btn.setCheckable(False)
+        self.toggle_btn.setCheckable(True)
         self.toggle_btn.stateChanged.connect(self.toggle_gaze)
 
         toggle_layout.addWidget(self.gaze_label)
@@ -115,8 +120,40 @@ class SettingsPage(QWidget):
     def toggle_gaze(self):
         state = self.toggle_btn.isChecked()
 
-        
 
+
+
+class Overlay
+
+
+
+
+
+def chek_update(current_version):
+    #url = #URL_ПРОВЕРКИ_ОБНОВЛЕНИЙ
+    
+    try:
+        r = requests.get(url, timeout=5)
+        latest = r.json()["version"]
+        
+        return latest != current_version, latest
+    except:
+        return False, current_version
+
+CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config.json"
+
+def load_config():
+    if not CONFIG_PATH.exists():
+        return {"version": "1.0.0", "gaze_enabled": False}
+
+    with open(CONFIG_PATH, "r", encoding="utf-8") as f: 
+        return json.load(f)
+    
+def save_config(data):
+    with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+        
     
 
 
