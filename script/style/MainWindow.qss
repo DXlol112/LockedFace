@@ -126,7 +126,6 @@ QMainWindow {
     color: #FFFFFF;
     font-weight: 900;
     font-size: 20px;
-    pozition: flex;
     right: 10px;
 }
 #text_settengs {
@@ -136,26 +135,38 @@ QMainWindow {
 #settings_btn {
     border: none;
     background-color: transparent;
-    position: flex;
-
 }
-#toggle_btn {
-    width: 60px;
-    height: 30px;
+#settings_btn:hover {
+    background-color: #2a2a2a;
+    border-radius: 3px;
 }
-#toggle_btn::indicator {
-    width: 60px;
-    height: 30px;
-    border-radius: 15px;
-    background-color: #777;
-}
-#toggle_btn::indicator:checked {
-    background-color: #4cd964;
-}
-#toggle_btn::indicator:unchecked {
-    background-color: #777;
-}
-#toggle_btn::indicator {
-    image: none;
+#line_sep{
     border: none;
+    background-color: #818181;
+}
+
+#toggle_btn {
+    spacing: 0px;
+    background: transparent;
+}
+
+#toggle_btn::indicator {
+    width: 50px;
+    height: 26px;
+    border-radius: 13px;
+}
+
+#toggle_btn::indicator:unchecked {
+    background-color: #6E6F72; 
+    image: url(static/btn_icon/switch_off.png); 
+}
+
+#toggle_btn::indicator:checked {
+    background-color: #D9D9D9; 
+    image: url(static/btn_icon/switch_on.png);
+}
+
+#toggle_btn:focus {
+    border: none;
+    outline: none;
 }

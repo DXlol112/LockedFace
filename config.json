@@ -1,4 +1,5 @@
 {
     "version": "1.0.0",
-    "gaze_enabled": false
+    "gaze_enabled": false,
+    "glasses_enabled": false
 }
