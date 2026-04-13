@@ -7,11 +7,12 @@ from PyQt6.QtGui import QIcon
 from script.UI.settings_page import SettingsPage
 
 class MainPage(QWidget):
-    def __init__(self,on_start, on_settings):
+    def __init__(self,on_start, on_settings, on_file):
         super().__init__()
 
         self.on_start = on_start
         self.on_settings = on_settings
+        self.on_file = on_file
 
         self.h = 0
         self.m = 0
@@ -39,7 +40,7 @@ class MainPage(QWidget):
         self.setting_btn.setIconSize(QSize(53, 53))
 
         self.setting_btn.clicked.connect(on_settings)
-        #self.file_btn.clicked.connect(on_file)
+        self.file_btn.clicked.connect(on_file)
 
         header.addStretch()
         header.addWidget(self.file_btn)

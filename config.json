@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0",
-    "gaze_enabled": false,
-    "glasses_enabled": false
+    "selected_file": "media/test.jpg",
+    "gaze_enabled": true,
+    "glasses_enabled": true
 }
