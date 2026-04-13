@@ -52,11 +52,16 @@ def load_stylesheet(app):
     with open(Path(__file__).resolve().parent / "script/style/all_project.qss", "r") as f:
         app.setStyleSheet(f.read())
 
-app = QApplication(sys.argv)
 
-load_stylesheet(app)
+def main():
+    app = QApplication(sys.argv)
 
-window = MainWindow()
-window.show()
+    load_stylesheet(app)
 
-app.exec()
+    window = MainWindow()
+    window.show()
+
+    app.exec()
+
+if __name__ == "__main__":
+    main()

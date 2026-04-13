@@ -1,5 +1,6 @@
 {
     "selected_file": "media/test.jpg",
     "gaze_enabled": true,
-    "glasses_enabled": true
+    "glasses_enabled": true,
+    "work_time_seconds": 33250
 }

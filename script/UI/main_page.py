@@ -3,8 +3,10 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, QPropertyAnimation, QRect, QSize
 from PyQt6.QtGui import QIcon
+import os
+import json
 
-from script.UI.settings_page import SettingsPage
+from script.core.def_collection import run_monitor
 
 class MainPage(QWidget):
     def __init__(self,on_start, on_settings, on_file):
@@ -13,14 +15,15 @@ class MainPage(QWidget):
         self.on_start = on_start
         self.on_settings = on_settings
         self.on_file = on_file
+        self.config_path = "config.json"
 
         self.h = 0
         self.m = 0
-        self.s = 0 
+        self.s = 0
+        self.load_time_from_config() 
         
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
     
     #-------------------------header-------------------------------#  
         header_widget = QWidget()
@@ -88,7 +91,7 @@ class MainPage(QWidget):
 
         self.start_btn = QPushButton("СТАРТ")
         self.start_btn.setObjectName("start_btn")
-        self.start_btn.clicked.connect(self.start_cliced)
+        self.start_btn.clicked.connect(self.start_clicked)
         
         self.info = QLabel("Перед началом выберете файл")
         self.info.setObjectName("text_info_file")
@@ -112,6 +115,27 @@ class MainPage(QWidget):
 
 
         #--------------------------------------------#
+    def load_time_from_config(self):
+        try:
+            if os.path.exists(self.config_path):
+                with open(self.config_path, 'r', encoding='utf-8') as f:
+                    config = json.load(f)
+                    t = config.get("work_time_seconds", 0)
+                    self.h, self.m, self.s = t // 3600, (t % 3600) // 60, t % 60
+        except: pass
+    
+    def save_time_to_config(self):
+        total = self.h * 3600 + self.m * 60 + self.s
+        config = {}
+        if os.path.exists(self.config_path):
+            try:
+                with open(self.config_path, 'r', encoding='utf-8') as f: config = json.load(f)
+            except: pass
+        config["work_time_seconds"] = total
+        with open(self.config_path, 'w', encoding='utf-8') as f:
+            json.dump(config, f, indent=4, ensure_ascii=False)
+
+
     def create_arrow(self, text, func):
         btn = QPushButton(text)
         btn.setObjectName("arrow_btn")
@@ -132,10 +156,11 @@ class MainPage(QWidget):
     def dec_s(self): self.s = (self.s - 1) % 60; self.update_label()
 
     #-------------------------------------#
-    def start_cliced(self):
-        self.animate_and_start(self.on_start)
+    def start_clicked(self):
+        self.save_time_to_config()
+        self.animate_and_start()
         
-    def animate_and_start(self, gaze_of_or_on):
+    def animate_and_start(self):
         self.anim = QPropertyAnimation(self, b"geometry")
         self.anim.setDuration(500)
 
