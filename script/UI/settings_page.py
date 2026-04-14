@@ -78,7 +78,7 @@ class SettingsPage(QWidget):
             row = QHBoxLayout()
 
             label = QLabel(text)
-            label.setObjectName("text_settengs")
+            label.setObjectName("text_settings")
 
             btn = QPushButton()
             btn.setObjectName("settings_btn")
@@ -94,11 +94,11 @@ class SettingsPage(QWidget):
 
             return row
 
-        chek_updates = create_action("Проверить обновление", "static/btn_icon/refresh_btn.png", (51,49), self.update_cheker)
+        check_updates = create_action("Проверить обновление", "static/btn_icon/refresh_btn.png", (51,49), self.update_checker)
         open_folder_text_btn  = create_action("Открыть рабочую папку", "static/btn_icon/link_btn.png",(56,46), self.open_folder)
         source_code = create_action("Исходный код","static/btn_icon/link_btn.png", (56,46), self.open_github)
 
-        actions_layout.addLayout(chek_updates)
+        actions_layout.addLayout(check_updates)
         actions_layout.addLayout(open_folder_text_btn)
         actions_layout.addLayout(source_code)
     #------------------line sep-------------------------#
@@ -119,26 +119,26 @@ class SettingsPage(QWidget):
             row = QHBoxLayout()
 
             label = QLabel(text)
-            label.setObjectName("text_settengs")
+            label.setObjectName("text_settings")
 
-            togle = QCheckBox()
-            togle.setObjectName("toggle_btn")
+            toggle = QCheckBox()
+            toggle.setObjectName("toggle_btn")
             
             current_state = self.load_state(json_key)
-            togle.setChecked(current_state)
+            toggle.setChecked(current_state)
 
-            togle.stateChanged.connect(lambda state: self.save_state(state == 2, json_key))
+            toggle.stateChanged.connect(lambda state: self.save_state(state == 2, json_key))
 
             row.addWidget(label)
             row.addStretch()
-            row.addWidget(togle)
+            row.addWidget(toggle)
 
             return row
         
-        togle_gaze = create_toggle("Включить отслеживание направление глаз (Pre Alpha)", "gaze_enabled")
+        toggle_gaze = create_toggle("Включить отслеживание направление глаз (Pre Alpha)", "gaze_enabled")
         toggle_glasses = create_toggle("Наличие очков", "glasses_enabled")
 
-        toggle_layout.addLayout(togle_gaze)
+        toggle_layout.addLayout(toggle_gaze)
         toggle_layout.addSpacing(12)
         toggle_layout.addLayout(toggle_glasses)
     #----------------------ALL-------------------------#
@@ -154,7 +154,7 @@ class SettingsPage(QWidget):
         main_layout.addStretch()
 
     #-------------------------Functions---------------------#   
-    def update_cheker(self):
+    def update_checker(self):
         pass
     
     def open_folder(self):

@@ -6,7 +6,6 @@ from PyQt6.QtGui import QIcon
 import os
 import json
 
-from script.core.def_collection import run_monitor
 
 class MainPage(QWidget):
     def __init__(self,on_start, on_settings, on_file):

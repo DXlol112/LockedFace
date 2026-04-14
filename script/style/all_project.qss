@@ -128,7 +128,7 @@ QMainWindow {
     font-size: 20px;
     right: 10px;
 }
-#text_settengs {
+#text_settings {
     color: #EDE9E9;
     font-size: 20px;
 }
@@ -170,7 +170,7 @@ QMainWindow {
     border: none;
     outline: none;
 }
-/*file_pahe*/
+/*file_path*/
 #file_scroll {
     background-color: #1e1e1e;
     border: none;
