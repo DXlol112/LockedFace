@@ -112,7 +112,7 @@ class MainPage(QWidget):
         main_layout.addSpacing(20)
         main_layout.addLayout(footer)
 
-
+        self.update_label()
         #--------------------------------------------#
     def load_time_from_config(self):
         try:
