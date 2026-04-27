@@ -5,3 +5,5 @@ __pycache__/
 # Media files
 media/
 
+# Config file
+config.json

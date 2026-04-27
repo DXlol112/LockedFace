@@ -1,6 +1,6 @@
 {
-    "selected_file": "media/Test.mp4",
-    "gaze_enabled": true,
-    "glasses_enabled": true,
-    "work_time_seconds": 33201
+    "selected_file": null,
+    "gaze_enabled": false,
+    "glasses_enabled": false,
+    "work_time_seconds": 0
 }

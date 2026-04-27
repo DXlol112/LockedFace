@@ -154,6 +154,14 @@ class SettingsPage(QWidget):
         main_layout.addStretch()
 
     #-------------------------Functions---------------------#   
+    DEFAULT_CONFIG = {
+    "selected_file": None,
+    "gaze_enabled": False,
+    "glasses_enabled": False,
+    "work_time_seconds": 0
+    }
+    
+    
     def update_checker(self):
         pass
     
@@ -165,28 +173,35 @@ class SettingsPage(QWidget):
         webbrowser.open("https://github.com/DXlol112")
 
 
-    def save_state(self, checked:bool, json_key:str):
-        with open("config.json", "r", encoding="utf-8") as f:
-            data = json.load(f)
+    def save_state(self, checked: bool, json_key: str):
+        data = self.DEFAULT_CONFIG.copy()
+        if os.path.exists("config.json"):
+            try:
+                with open("config.json", "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except (json.JSONDecodeError, IOError):
+                pass
 
         data[json_key] = checked
 
-        with open("config.json", "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
-    
+        try:
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+        except IOError as e:
+            print(f"Ошибка записи конфига: {e}")
 
+    def load_state(self, json_key: str):
+        if not os.path.exists("config.json"):
+            try:
+                with open("config.json", "w", encoding="utf-8") as f:
+                    json.dump(self.DEFAULT_CONFIG, f, indent=4, ensure_ascii=False)
+            except IOError:
+                pass
+            return self.DEFAULT_CONFIG.get(json_key, False)
 
-    def load_state(self, json_key:str):
-        with open("config.json", "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return data.get(json_key, False)
-
-
-        
-
-
-        
-    
-
-
-        
+        try:
+            with open("config.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data.get(json_key, self.DEFAULT_CONFIG.get(json_key, False))
+        except (json.JSONDecodeError, IOError):
+            return self.DEFAULT_CONFIG.get(json_key, False)
