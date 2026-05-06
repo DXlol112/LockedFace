@@ -135,7 +135,7 @@ class SettingsPage(QWidget):
 
             return row
         
-        toggle_gaze = create_toggle("Включить отслеживание направление глаз (Pre Alpha)", "gaze_enabled")
+        toggle_gaze = create_toggle("Включить отслеживание направление глаз (Not Relies)", "gaze_enabled")
         toggle_glasses = create_toggle("Наличие очков", "glasses_enabled")
 
         toggle_layout.addLayout(toggle_gaze)
