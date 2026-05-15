@@ -12,8 +12,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Maintaining attention at work")
-        self.setWindowIcon(QIcon("static/icon/app_icon.png"))
+        self.setWindowTitle("LockedFace")
+        self.setWindowIcon(QIcon("static/icon/logo_icon.svg"))
         self.setFixedSize(800, 600)
 
         self.stack = QStackedWidget()

@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import (
-    QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QCheckBox, QDialog, QFrame
+    QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QCheckBox, QDialog, QFrame, QGridLayout
 )
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QIcon, QPixmap
@@ -8,7 +8,6 @@ import json
 import webbrowser
 from pathlib import Path
 import os
-
 
 
 class SettingsPage(QWidget):
@@ -38,11 +37,12 @@ class SettingsPage(QWidget):
         header.addWidget(self.back_btn)
         header.addStretch()
         #---------------info-----------------#
-        info_block = QHBoxLayout()
-        info_block.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        info_block = QGridLayout()
+        info_block.setContentsMargins(0, 0, 0, 0)
+        info_block.setSpacing(0)
 
         self.icon_project = QLabel()
-        self.icon_project.setPixmap(QPixmap("static/icon/app_icon.png"))
+        self.icon_project.setPixmap(QPixmap("static/icon/logo_icon.svg"))
         self.icon_project.setObjectName("icon_project")
         self.icon_project.setFixedSize(218, 218)
         self.icon_project.setScaledContents(True)
@@ -50,29 +50,34 @@ class SettingsPage(QWidget):
         text_block = QVBoxLayout()
         text_block.setSpacing(10)
 
-        self.name = QLabel("Maintaining attention at work")
+        self.name = QLabel("LockedFace")
         self.name.setObjectName("name_set")
-        self.name.setContentsMargins(0,40,0,0)
+        self.name.setContentsMargins(0, 0, 0, 0)
+        self.name.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.ver = QLabel("Версия: 1.0.0")
         self.ver.setObjectName("ver_set")
+        self.ver.setContentsMargins(0, 0, 0, 0)
         self.ver.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.ver.setContentsMargins(0,5,0,0)
         
         text_block.addWidget(self.name)
         text_block.addWidget(self.ver)
-        text_block.addStretch()
 
-        info_block.addSpacing(20)
-        info_block.addWidget(self.icon_project)
-        info_block.addSpacing(20)
-        info_block.addLayout(text_block)
-        info_block.addStretch()
+        info_block.addWidget(self.icon_project, 0, 0, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        info_block.addLayout(text_block, 0, 1, Qt.AlignmentFlag.AlignCenter)
+        
+        spacer_right = QWidget()
+        spacer_right.setFixedWidth(218)
+        info_block.addWidget(spacer_right, 0, 2)
+
+        info_block.setColumnStretch(0, 0)
+        info_block.setColumnStretch(1, 1)
+        info_block.setColumnStretch(2, 0)
 
         #----------------------actions-------------------------#
         actions_layout = QVBoxLayout()
         actions_layout.setSpacing(10)
-        actions_layout.setContentsMargins(10,0,0,0)
+        actions_layout.setContentsMargins(10, 0, 0, 0)
 
         def create_action(text:str, icon_path:str, size: tuple, callback=None): #<div> text...........btn</div>
             row = QHBoxLayout()
@@ -94,9 +99,9 @@ class SettingsPage(QWidget):
 
             return row
 
-        check_updates = create_action("Проверить обновление", "static/btn_icon/refresh_btn.png", (51,49), self.update_checker)
-        open_folder_text_btn  = create_action("Открыть рабочую папку", "static/btn_icon/link_btn.png",(56,46), self.open_folder)
-        source_code = create_action("Исходный код","static/btn_icon/link_btn.png", (56,46), self.open_github)
+        check_updates = create_action("Проверить обновление", "static/btn_icon/refresh_btn.png", (51, 49), self.update_checker)
+        open_folder_text_btn  = create_action("Открыть рабочую папку", "static/btn_icon/link_btn.png", (56, 46), self.open_folder)
+        source_code = create_action("Исходный код", "static/btn_icon/link_btn.png", (56, 46), self.open_github)
 
         actions_layout.addLayout(check_updates)
         actions_layout.addLayout(open_folder_text_btn)
@@ -112,7 +117,7 @@ class SettingsPage(QWidget):
         
     #-------------------------Toggle---------------------#
         toggle_layout = QVBoxLayout()
-        toggle_layout.setContentsMargins(10,0,0,0)
+        toggle_layout.setContentsMargins(10, 0, 5, 0)
         toggle_layout.setSpacing(10)
 
         def create_toggle(text:str, json_key:str, callback=None):
@@ -143,7 +148,10 @@ class SettingsPage(QWidget):
         toggle_layout.addLayout(toggle_glasses)
     #----------------------ALL-------------------------#
         main_layout.addWidget(header_widget)
+        main_layout.addSpacing(3)
         main_layout.addLayout(info_block)
+        main_layout.addSpacing(20)
+
         main_layout.addLayout(actions_layout)
 
         main_layout.addSpacing(20)
@@ -155,12 +163,11 @@ class SettingsPage(QWidget):
 
     #-------------------------Functions---------------------#   
     DEFAULT_CONFIG = {
-    "selected_file": None,
-    "gaze_enabled": False,
-    "glasses_enabled": False,
-    "work_time_seconds": 0
+        "selected_file": None,
+        "gaze_enabled": False,
+        "glasses_enabled": False,
+        "work_time_seconds": 0
     }
-    
     
     def update_checker(self):
         pass
@@ -170,8 +177,7 @@ class SettingsPage(QWidget):
         os.startfile(project_path)
 
     def open_github(self):
-        webbrowser.open("https://github.com/DXlol112")
-
+        webbrowser.open("github.com")
 
     def save_state(self, checked: bool, json_key: str):
         data = self.DEFAULT_CONFIG.copy()
