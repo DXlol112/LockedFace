@@ -93,7 +93,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("LockedFace")
-        self.setWindowIcon(QIcon("static/icon/logo_icon.svg"))
+        self.setWindowIcon(QIcon("static/icon/logo_icon.ico"))
         self.setFixedSize(800, 600)
 
         self.stack = QStackedWidget()

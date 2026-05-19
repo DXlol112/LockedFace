@@ -1,0 +1,1 @@
+![alt text](static/icon/logo_icon.svg)
