@@ -1,12 +1,92 @@
+import os
+# Отключение аппаратного ускорения видео 
+os.environ['QT_XCB_GL_INTEGRATION'] = 'none'
+os.environ['QT_DEBUG_PLUGINS'] = '0'
+
 import sys
+import logging
 from PyQt6.QtWidgets import QApplication, QStackedWidget, QMainWindow
 from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import qInstallMessageHandler, QtMsgType
 from pathlib import Path
 
 from script.UI.start_page import StartPage
 from script.UI.main_page import MainPage
 from script.UI.settings_page import SettingsPage
 from script.UI.file_page import FilePage
+
+class LoggingFile:
+    def __init__(self, logger, log_level) -> None:
+        self.logger = logger
+        self.log_level = log_level
+        self._buffer = []
+
+    def write(self, buf):
+        self._buffer.append(buf)
+        
+        if "\n" in buf:
+            full_text = "".join(self._buffer)
+            self._buffer.clear()
+            
+            lines = full_text.splitlines(keepends=True)
+            for line in lines:
+                if line.endswith("\n"):
+                    cleaned = line.strip()
+                    if cleaned:
+                        self.logger.log(self.log_level, cleaned)
+                else:
+                    self._buffer.append(line)
+            
+    def flush(self):
+        if self._buffer:
+            cleaned = "".join(self._buffer).strip()
+            if cleaned:
+                self.logger.log(self.log_level, cleaned)
+            self._buffer.clear()
+
+def qt_message_handler(mode, context, message):
+    logger = logging.getLogger("Qt")
+    if mode == QtMsgType.QtDebugMsg:
+        logger.debug(message)
+    elif mode == QtMsgType.QtInfoMsg:
+        logger.info(message)
+    elif mode == QtMsgType.QtWarningMsg:
+        logger.warning(message)
+    elif mode == QtMsgType.QtCriticalMsg:
+        logger.error(message)
+    elif mode == QtMsgType.QtFatalMsg:
+        logger.critical(message)
+
+def setup_logging():
+    if hasattr(sys, "_MEIPASS"):
+        base_dir = Path(sys.argv[0]).parent
+    else:
+        base_dir = Path(__file__).resolve().parent
+    
+    log_dir = base_dir / "log"
+    log_dir.mkdir(exist_ok=True)
+    log_file = log_dir / "app.log"
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - [%(levelname)s] - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        handlers=[
+            logging.FileHandler(log_file, encoding="utf-8", mode="w"),
+            logging.StreamHandler(sys.__stdout__)
+        ]
+    )
+
+    logging.captureWarnings(True)
+    logging.getLogger("py.warnings").setLevel(logging.CRITICAL)
+    logging.getLogger("google").setLevel(logging.ERROR)
+    logging.getLogger("mediapipe").setLevel(logging.ERROR)
+
+    root_logger = logging.getLogger()
+    sys.stdout = LoggingFile(root_logger, logging.INFO)
+    sys.stderr = LoggingFile(root_logger, logging.ERROR)
+    
+    qInstallMessageHandler(qt_message_handler)
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -54,6 +134,9 @@ def load_stylesheet(app):
 
 
 def main():
+    setup_logging()
+    print("Start LockedFace")
+
     app = QApplication(sys.argv)
 
     load_stylesheet(app)
@@ -62,6 +145,10 @@ def main():
     window.show()
 
     app.exec()
+    print("close LockedFace")
+    
+    sys.stdout.flush()
+    sys.stderr.flush()
 
 if __name__ == "__main__":
     main()

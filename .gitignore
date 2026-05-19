@@ -5,8 +5,9 @@ __pycache__/
 # Media files
 media/
 
-# Config file
+# Config file/log
 config.json
+log/
 
 #Virtual
 venv/

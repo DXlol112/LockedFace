@@ -1,0 +1,41 @@
+/* static/styles/dialog_style.qss */
+QWidget#overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+QWidget#modalDialog {
+    background-color: #2c2c2c;
+    border: 1px solid #3d3d3d;
+    border-radius: 8px;
+}
+
+QLabel#titleLabel {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    padding-left: 5px;
+}
+
+QLabel#messageLabel {
+    color: #e0e0e0;
+    font-size: 14px;
+    padding: 0 10px;
+}
+
+QPushButton#closeButton {
+    background: transparent;
+    border: none;
+    color: #888888;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+QPushButton#closeButton:hover {
+    color: #ffffff;
+    background-color: #e81123;
+}
+
+QPushButton#closeButton:pressed {
+    background-color: #bc101e;
+}

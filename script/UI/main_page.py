@@ -10,6 +10,7 @@ from PyQt6.QtCore import Qt, QPropertyAnimation, QRect, QSize, pyqtSlot
 from PyQt6.QtGui import QIcon, QImage, QPixmap
 
 from script.core.def_collection import VideoThread 
+from script.UI.support_UI import WinDialog
 
 class MainPage(QWidget):
     def __init__(self, on_start, on_settings, on_file):
@@ -217,6 +218,13 @@ class MainPage(QWidget):
     def dec_s(self): self.s = (self.s - 1) % 60; self.update_label()
 
     def start_clicked(self):
+        file_path, _, _ = self.get_full_config()
+        if not file_path:
+            WinDialog(self, "Нет файла")
+            
+        if self.h == 0 and self.m == 0 and self.s == 0:
+            WinDialog(self, "Неправильное время.")
+            return
         self.save_time_to_config()
         self.animate_and_start()
         

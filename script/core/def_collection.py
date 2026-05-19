@@ -6,10 +6,13 @@ import shutil
 import cv2
 import numpy as np
 
+# Отключение аппаратного ускорения видео
+os.environ['QT_XCB_GL_INTEGRATION'] = 'none'
+os.environ['QT_DEBUG_PLUGINS'] = '0'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 from PyQt6.QtCore import QThread, pyqtSignal
 from ffpyplayer.player import MediaPlayer
-
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 try:
     import mediapipe.solutions.face_mesh as mp_face_mesh # type: ignore
@@ -32,9 +35,9 @@ def is_eye_open(landmarks, eye_indices, glass_enabled):
     p2 = landmarks[eye_indices[1]]
     dist = np.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2) 
     if glass_enabled:
-        return dist > 0.005
+        return dist > 0.015
     else:
-        return dist > 0.018
+        return dist > 0.030
 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
@@ -144,28 +147,43 @@ class VideoThread(QThread):
                             if ext in ['.jpg', '.jpeg', '.png']:
                                 error_cap = None 
                             else:
-                                error_player = MediaPlayer(temp_name)
-                                error_cap = cv2.VideoCapture(temp_name)
+                                try:
+                                    error_player = MediaPlayer(temp_name)
+                                    error_cap = cv2.VideoCapture(temp_name)
+                                    if not error_cap.isOpened():
+                                        print("Предупреждение: Не удалось открыть видеофайл, используется статичное изображение")
+                                        error_cap = None
+                                        if error_player:
+                                            error_player.close_player()
+                                            error_player = None
+                                except Exception as e:
+                                    print(f"Предупреждение: Ошибка при загрузке видеофайл: {e}")
+                                    error_player = None
+                                    error_cap = None
                             error_window_active = True
                         else:
                             print("Ошибка: Файл для Error_window нет")
                             continue
 
                     if error_cap:
-                        res, e_frame = error_cap.read()
-                        audio_frame, val = error_player.get_frame() if error_player else (None, 0)
+                        try:
+                            res, e_frame = error_cap.read()
+                            audio_frame, val = error_player.get_frame() if error_player else (None, 0)
+                        except Exception as e:
+                            print(f"Предупреждение: Ошибка при чтении видеокадра: {e}")
+                            res = False
                         
                         if not res:
                             error_cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                             res, e_frame = error_cap.read()
 
-                        if val != 'eof' and isinstance(val, (int, float)) and val > 0:
+                        if val != 'eof' and isinstance(val, (int, float)) and val > 0: # type: ignore
                             current_video_time = error_cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
                             wait_time = val - current_video_time
                             if wait_time > 0:
                                 time.sleep(wait_time)
 
-                        cv2.imshow("Error", e_frame)
+                        cv2.imshow("Error", e_frame) # type: ignore
                     else:
                         img = cv2.imread(temp_name) # type: ignore
                         if img is not None: cv2.imshow("Error", img)
