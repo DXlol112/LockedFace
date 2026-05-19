@@ -219,12 +219,20 @@ class MainPage(QWidget):
 
     def start_clicked(self):
         file_path, _, _ = self.get_full_config()
+        errors = []
+        
         if not file_path:
-            WinDialog(self, "Нет файла")
-            
+            errors.append("Не выбран файл")
+        
         if self.h == 0 and self.m == 0 and self.s == 0:
-            WinDialog(self, "Неправильное время.")
+            errors.append("Неправильно выбрано время")
+
+
+        if errors:
+            error_massage = "/n".join(errors)
+            WinDialog(self, error_massage, title="Ошибка")
             return
+        
         self.save_time_to_config()
         self.animate_and_start()
         
