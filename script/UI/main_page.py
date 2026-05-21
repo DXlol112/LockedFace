@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QPropertyAnimation, QRect, QSize, pyqtSlot
 from PyQt6.QtGui import QIcon, QImage, QPixmap
 
-from script.core.def_collection import VideoThread 
+from script.core import VideoThread, get_resource_path, get_config_path
 from script.UI.support_UI import WinDialog
 
 class MainPage(QWidget):
@@ -19,7 +19,7 @@ class MainPage(QWidget):
         self.on_start_callback = on_start
         self.on_settings = on_settings
         self.on_file = on_file
-        self.config_path = "config.json"
+        self.config_path = str(get_config_path())
 
         self.h = 0
         self.m = 0
@@ -46,12 +46,12 @@ class MainPage(QWidget):
 
         self.file_btn = QPushButton()
         self.file_btn.setObjectName("icon_btn")
-        self.file_btn.setIcon(QIcon("static/btn_icon/file_path.png"))
+        self.file_btn.setIcon(QIcon(str(get_resource_path("static/btn_icon/file_path.png"))))
         self.file_btn.setIconSize(QSize(53, 53))
         
         self.setting_btn = QPushButton()
         self.setting_btn.setObjectName("icon_btn")
-        self.setting_btn.setIcon(QIcon("static/btn_icon/setting.png"))
+        self.setting_btn.setIcon(QIcon(str(get_resource_path("static/btn_icon/setting.png"))))
         self.setting_btn.setIconSize(QSize(53, 53))
 
         self.setting_btn.clicked.connect(self.on_settings)

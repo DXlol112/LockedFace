@@ -6,6 +6,7 @@ from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QIcon, QPixmap
 
 from script.UI.support_UI.file_card_widget import FileCard
+from script.core import get_resource_path, get_config_path, get_base_dir
 
 import json
 from pathlib import Path
@@ -20,7 +21,7 @@ class FilePage(QWidget):
         self.confirm_delete = False
         self.on_back = on_back
 
-        self.json_path = "config.json"
+        self.json_path = str(get_config_path())
         self.selected_path = self.load_selection()
         self.cards = []
 
@@ -38,7 +39,7 @@ class FilePage(QWidget):
 
         self.back_btn = QPushButton()
         self.back_btn.setObjectName("back_btn")
-        self.back_btn.setIcon(QIcon("static/btn_icon/back_btn.png"))
+        self.back_btn.setIcon(QIcon(str(get_resource_path("static/btn_icon/back_btn.png"))))
         self.back_btn.setIconSize(QSize(71, 48))
         
         self.back_btn.clicked.connect(self.on_back)
@@ -88,7 +89,7 @@ class FilePage(QWidget):
     def open_system_dialog(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Выбрать файл", "", "Images/Video (*.png *.jpg *.webp *.mp4 *.gif)")
         if file_path:
-            media_dir = Path("media")
+            media_dir = get_base_dir() / "media"
             media_dir.mkdir(exist_ok=True)
         
             dest_path = media_dir / os.path.basename(file_path)
@@ -106,7 +107,7 @@ class FilePage(QWidget):
         
         self.cards.clear()
 
-        media_dir = Path("media")
+        media_dir = get_base_dir() / "media"
         media_dir.mkdir(exist_ok=True)
 
         files = list(media_dir.glob("*.*"))

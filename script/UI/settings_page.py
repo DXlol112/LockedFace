@@ -9,6 +9,8 @@ import webbrowser
 from pathlib import Path
 import os
 
+from script.core import get_resource_path, get_config_path
+
 
 class SettingsPage(QWidget):
     def __init__(self, on_back):
@@ -29,7 +31,7 @@ class SettingsPage(QWidget):
 
         self.back_btn = QPushButton()
         self.back_btn.setObjectName("back_btn")
-        self.back_btn.setIcon(QIcon("static/btn_icon/back_btn.png"))
+        self.back_btn.setIcon(QIcon(str(get_resource_path("static/btn_icon/back_btn.png"))))
         self.back_btn.setIconSize(QSize(71, 48))
         
         self.back_btn.clicked.connect(self.on_back)
@@ -42,7 +44,7 @@ class SettingsPage(QWidget):
         info_block.setSpacing(0)
 
         self.icon_project = QLabel()
-        self.icon_project.setPixmap(QPixmap("static/icon/logo_icon.svg"))
+        self.icon_project.setPixmap(QPixmap(str(get_resource_path("static/icon/logo_icon.svg"))))
         self.icon_project.setObjectName("icon_project")
         self.icon_project.setFixedSize(218, 218)
         self.icon_project.setScaledContents(True)
@@ -87,7 +89,7 @@ class SettingsPage(QWidget):
 
             btn = QPushButton()
             btn.setObjectName("settings_btn")
-            btn.setIcon(QIcon(icon_path))
+            btn.setIcon(QIcon(str(get_resource_path(icon_path))))
             btn.setIconSize(QSize(*size))
 
             if callback:
@@ -180,10 +182,11 @@ class SettingsPage(QWidget):
         webbrowser.open("github.com")
 
     def save_state(self, checked: bool, json_key: str):
+        config_path = get_config_path()
         data = self.DEFAULT_CONFIG.copy()
-        if os.path.exists("config.json"):
+        if config_path.exists():
             try:
-                with open("config.json", "r", encoding="utf-8") as f:
+                with open(config_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
             except (json.JSONDecodeError, IOError):
                 pass
@@ -191,22 +194,23 @@ class SettingsPage(QWidget):
         data[json_key] = checked
 
         try:
-            with open("config.json", "w", encoding="utf-8") as f:
+            with open(config_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
         except IOError as e:
             print(f"Ошибка записи конфига: {e}")
 
     def load_state(self, json_key: str):
-        if not os.path.exists("config.json"):
+        config_path = get_config_path()
+        if not config_path.exists():
             try:
-                with open("config.json", "w", encoding="utf-8") as f:
+                with open(config_path, "w", encoding="utf-8") as f:
                     json.dump(self.DEFAULT_CONFIG, f, indent=4, ensure_ascii=False)
             except IOError:
                 pass
             return self.DEFAULT_CONFIG.get(json_key, False)
 
         try:
-            with open("config.json", "r", encoding="utf-8") as f:
+            with open(config_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 return data.get(json_key, self.DEFAULT_CONFIG.get(json_key, False))
         except (json.JSONDecodeError, IOError):

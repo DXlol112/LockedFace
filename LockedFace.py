@@ -2,7 +2,7 @@ import os
 # Отключение аппаратного ускорения видео 
 os.environ['QT_XCB_GL_INTEGRATION'] = 'none'
 os.environ['QT_DEBUG_PLUGINS'] = '0'
-
+import traceback
 import sys
 import logging
 from PyQt6.QtWidgets import QApplication, QStackedWidget, QMainWindow
@@ -10,10 +10,14 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import qInstallMessageHandler, QtMsgType
 from pathlib import Path
 
-from script.UI.start_page import StartPage
-from script.UI.main_page import MainPage
-from script.UI.settings_page import SettingsPage
-from script.UI.file_page import FilePage
+from script import (
+    StartPage,
+    MainPage,
+    SettingsPage,
+    FilePage,
+    get_resource_path,
+    get_log_dir
+)
 
 class LoggingFile:
     def __init__(self, logger, log_level) -> None:
@@ -58,13 +62,7 @@ def qt_message_handler(mode, context, message):
         logger.critical(message)
 
 def setup_logging():
-    if hasattr(sys, "_MEIPASS"):
-        base_dir = Path(sys.argv[0]).parent
-    else:
-        base_dir = Path(__file__).resolve().parent
-    
-    log_dir = base_dir / "log"
-    log_dir.mkdir(exist_ok=True)
+    log_dir = get_log_dir()
     log_file = log_dir / "app.log"
 
     logging.basicConfig(
@@ -93,7 +91,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("LockedFace")
-        self.setWindowIcon(QIcon("static/icon/logo_icon.ico"))
+        self.setWindowIcon(QIcon(str(get_resource_path("static/icon/logo_icon.ico"))))
         self.setFixedSize(800, 600)
 
         self.stack = QStackedWidget()
@@ -129,11 +127,15 @@ class MainWindow(QMainWindow):
         print("Start program")
 
 def load_stylesheet(app):
-    with open(Path(__file__).resolve().parent / "script/style/all_project.qss", "r") as f:
+    stylesheet_path = get_resource_path("script/style/all_project.qss")
+    with open(stylesheet_path, "r", encoding="utf-8") as f:
         app.setStyleSheet(f.read())
 
 
 def main():
+    import multiprocessing
+    multiprocessing.freeze_support()
+    
     setup_logging()
     print("Start LockedFace")
 
@@ -151,4 +153,10 @@ def main():
     sys.stderr.flush()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        log_dir = get_log_dir()
+        crash_log = log_dir / "crash.log"
+        with open(crash_log, "w", encoding="utf-8") as f:
+            f.write(traceback.format_exc())

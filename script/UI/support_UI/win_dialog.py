@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
 from PyQt6.QtCore import Qt
+from script.core import get_resource_path
 import os
 
 class WinDialog(QWidget):
@@ -50,8 +51,8 @@ class WinDialog(QWidget):
         self.dialog.move(x, y)
 
     def _load_stylesheet(self):
-        style_path = "script/style/dialog_win.qss"
-        if os.path.exists(style_path):
+        style_path = get_resource_path("script/style/dialog_win.qss")
+        if style_path.exists():
             try:
                 with open(style_path, "r", encoding="utf-8") as f:
                     self.setStyleSheet(f.read())
