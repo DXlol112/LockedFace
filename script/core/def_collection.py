@@ -35,9 +35,30 @@ def is_eye_open(landmarks, eye_indices, glass_enabled):
     p2 = landmarks[eye_indices[1]]
     dist = np.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2) 
     if glass_enabled:
-        return dist > 0.015
+        return dist > 0.008
     else:
-        return dist > 0.030
+        return dist > 0.015
+
+def is_head_turned_away(landmarks):
+    p_nose = landmarks[4]
+    p_left = landmarks[234]
+    p_right = landmarks[454]
+    p_top = landmarks[10]
+    p_bot = landmarks[152]
+
+    width = abs(p_right.x - p_left.x)
+    if width == 0: return True
+    ratio_x = abs(p_nose.x - p_left.x) / width
+
+    height = abs(p_bot.y - p_top.y)
+    if height == 0: return True
+    ratio_y = abs(p_nose.y - p_top.y) / height
+    
+    if ratio_x < 0.35 or ratio_x > 0.65 or ratio_y < 0.35 or ratio_y > 0.65:
+        return True
+
+    return False
+
 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
@@ -69,6 +90,7 @@ class VideoThread(QThread):
         error_cap = None
         
         eyes_lost_time = 0.0
+        head_turned_time = 0.0
         cooldown_until = 0.0
         error_window_active = False
         
@@ -114,6 +136,7 @@ class VideoThread(QThread):
 
                 face_detected = False
                 eyes_detected = False
+                head_looking_forward = True
 
                 if results.multi_face_landmarks: # type: ignore
                     face_detected = True
@@ -130,16 +153,32 @@ class VideoThread(QThread):
                     else:
                         eyes_detected = True
 
+                    if is_head_turned_away(landmarks):
+                        head_looking_forward = False
+
                 should_error = False
                 in_cooldown = curr_t < cooldown_until
 
-                if (not face_detected or not eyes_detected) and not in_cooldown:
-                    if eyes_lost_time == 0: eyes_lost_time = curr_t
-                    if curr_t - eyes_lost_time >= 1.3:
-                        should_error = True
-                else:
-                    eyes_lost_time = 0
+                if not in_cooldown:
+                    if not face_detected or not eyes_detected:
+                        if eyes_lost_time == 0: 
+                            eyes_lost_time = curr_t
+                        if curr_t - eyes_lost_time >= 1.3:
+                            should_error = True
+                    else:
+                        eyes_lost_time = 0.0
 
+                    if face_detected and not head_looking_forward:
+                        if head_turned_time == 0: 
+                            head_turned_time = curr_t
+                        if curr_t - head_turned_time >= 1.0:
+                            should_error = True
+                    else:
+                        head_turned_time = 0.0
+                else:
+                    eyes_lost_time = 0.0
+                    head_turned_time = 0.0
+                    
                 if should_error:
                     if not error_window_active:
                         if temp_name:
