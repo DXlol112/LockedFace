@@ -1,0 +1,109 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "./LockedFace.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": false
+  },
+  {
+   "optionDest": "console",
+   "value": true
+  },
+  {
+   "optionDest": "icon_file",
+   "value": "./static/icon/logo_icon.ico"
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "disable_windowed_traceback",
+   "value": false
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "argv_emulation",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "./config.json;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "./media;media/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "./script;script/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "./static;static/"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "script"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "script.core"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "script.UI"
+  },
+  {
+   "optionDest": "collect_all",
+   "value": "PyQt6"
+  },
+  {
+   "optionDest": "collect_all",
+   "value": "cv2"
+  },
+  {
+   "optionDest": "collect_all",
+   "value": "numpy"
+  },
+  {
+   "optionDest": "collect_all",
+   "value": "ffpyplayer"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "script.UI.support_UI"
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}

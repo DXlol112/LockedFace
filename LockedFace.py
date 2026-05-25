@@ -19,35 +19,6 @@ from script import (
     get_log_dir
 )
 
-class LoggingFile:
-    def __init__(self, logger, log_level) -> None:
-        self.logger = logger
-        self.log_level = log_level
-        self._buffer = []
-
-    def write(self, buf):
-        self._buffer.append(buf)
-        
-        if "\n" in buf:
-            full_text = "".join(self._buffer)
-            self._buffer.clear()
-            
-            lines = full_text.splitlines(keepends=True)
-            for line in lines:
-                if line.endswith("\n"):
-                    cleaned = line.strip()
-                    if cleaned:
-                        self.logger.log(self.log_level, cleaned)
-                else:
-                    self._buffer.append(line)
-            
-    def flush(self):
-        if self._buffer:
-            cleaned = "".join(self._buffer).strip()
-            if cleaned:
-                self.logger.log(self.log_level, cleaned)
-            self._buffer.clear()
-
 def qt_message_handler(mode, context, message):
     logger = logging.getLogger("Qt")
     if mode == QtMsgType.QtDebugMsg:
@@ -80,10 +51,6 @@ def setup_logging():
     logging.getLogger("google").setLevel(logging.ERROR)
     logging.getLogger("mediapipe").setLevel(logging.ERROR)
 
-    root_logger = logging.getLogger()
-    sys.stdout = LoggingFile(root_logger, logging.INFO)
-    sys.stderr = LoggingFile(root_logger, logging.ERROR)
-    
     qInstallMessageHandler(qt_message_handler)
 
 class MainWindow(QMainWindow):

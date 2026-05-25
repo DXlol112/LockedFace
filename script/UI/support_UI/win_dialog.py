@@ -29,10 +29,11 @@ class WinDialog(QWidget):
         self.close_btn.clicked.connect(self._close)
         title_layout.addWidget(self.close_btn)
 
-        self.msg_label = QLabel(massage)
+        self.msg_label = QLabel(massage.replace('\n', '<br>'))
         self.msg_label.setObjectName("messageLabel")
         self.msg_label.setWordWrap(True)
         self.msg_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.msg_label.setTextFormat(Qt.TextFormat.RichText)
 
         layout = QVBoxLayout(self.dialog)
         layout.addLayout(title_layout)

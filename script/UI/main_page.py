@@ -220,6 +220,12 @@ class MainPage(QWidget):
     def start_clicked(self):
         file_path, _, _ = self.get_full_config()
         errors = []
+
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            errors.append("Не удалось получить доступ к камере")
+        else:
+            cap.release()
         
         if not file_path:
             errors.append("Не выбран файл")
@@ -229,7 +235,7 @@ class MainPage(QWidget):
 
 
         if errors:
-            error_massage = "/n".join(errors)
+            error_massage = "\n".join(errors)
             WinDialog(self, error_massage, title="Ошибка")
             return
         
