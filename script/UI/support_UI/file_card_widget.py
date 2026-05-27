@@ -130,3 +130,28 @@ class FileCard(QFrame):
             self.setStyleSheet("QFrame#file_card { border: 3px solid green; border-radius: 10px; }")
         else:
             self.setStyleSheet("QFrame#file_card { border: 1px solid gray; border-radius: 10px; }")
+    
+    def cleanup_resources(self):
+        try:
+            # Останавливаем медиаплеер
+            if self.media_player:
+                self.media_player.stop()
+                self.media_player.setSource(QUrl())  # Очищаем источник
+            
+            # Останавливаем GIF анимацию
+            if self.movie:
+                self.movie.stop()
+                self.movie = None
+            
+            # Отсоединяем сигналы
+            try:
+                self.sink.videoFrameChanged.disconnect()
+            except:
+                pass
+            try:
+                self.media_player.durationChanged.disconnect()
+            except:
+                pass
+                
+        except Exception as e:
+            print(f"Ошибка при очистке ресурсов: {e}")

@@ -1,7 +1,7 @@
 # local files
 media/
-config
 log/
+config.json
 
 
 

@@ -162,6 +162,12 @@ class FilePage(QWidget):
             return
         
         try:
+            # Очищаем ресурсы медиаплеера перед удалением
+            for card in self.cards:
+                if card.path == self.selected_path:
+                    card.cleanup_resources()
+                    break
+            
             path_to_remove = Path(self.selected_path)
             if path_to_remove.exists():
                 os.remove(path_to_remove)
