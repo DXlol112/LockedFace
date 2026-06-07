@@ -92,6 +92,10 @@
   {
    "optionDest": "hiddenimports",
    "value": "script.UI.support_UI"
+  },
+  {
+   "optionDest": "datas",
+   "value": "./.venv/Lib/site-packages/mediapipe;mediapipe/"
   }
  ],
  "nonPyinstallerOptions": {
