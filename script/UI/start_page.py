@@ -1,28 +1,44 @@
-from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import QEvent, Qt
+from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
 
 
 class StartPage(QWidget):
-    def __init__(self, on_continue) -> None:
+    def __init__(self, on_continue) -> None:  # type: ignore[no-untyped-def]
         super().__init__()
 
         layout = QVBoxLayout(self)
 
-        text_title = QLabel("Перед использованием\n" \
-                            "           программы ")
-        text_title.setObjectName("text_title")
+        self.text_title = QLabel()
+        self.text_title.setObjectName("text_title")
 
-        text = QLabel("Поставьте камеру прямо на уровне глаз, направьте её ровно\nна лицо и обеспечьте яркое переднее освещение, избегая\nтеней и слепящего света сзади, чтобы ваше лицо было четко\nи полностью видно.")
-        text.setObjectName("text")
-        text.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.text = QLabel()
+        self.text.setObjectName("text")
+        self.text.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        continue_btn = QPushButton("Продолжить")
-        continue_btn.setObjectName("continue_btn")
-        continue_btn.clicked.connect(on_continue)
+        self.continue_button = QPushButton()
+        self.continue_button.setObjectName("continue_btn")
+        self.continue_button.clicked.connect(on_continue)
 
         layout.addStretch()
-        layout.addWidget(text_title, alignment=Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(text)
-        layout.addWidget(continue_btn, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.text_title, alignment=Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.text)
+        layout.addWidget(self.continue_button, alignment=Qt.AlignmentFlag.AlignCenter)
         layout.addStretch()
-        
+
+        self.retranslate_ui()
+
+    def retranslate_ui(self) -> None:
+        self.text_title.setText(self.tr("Перед использованием\nпрограммы"))
+        self.text.setText(
+            self.tr(
+                "Поставьте камеру прямо на уровне глаз и направьте её на лицо.\n"
+                "Обеспечьте яркое переднее освещение, избегайте теней и света сзади,\n"
+                "чтобы лицо было чётко и полностью видно."
+            )
+        )
+        self.continue_button.setText(self.tr("Продолжить"))
+
+    def changeEvent(self, event: QEvent) -> None:  # noqa: N802
+        if event.type() == QEvent.Type.LanguageChange:
+            self.retranslate_ui()
+        super().changeEvent(event)

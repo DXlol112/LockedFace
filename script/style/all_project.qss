@@ -163,13 +163,11 @@ QMainWindow {
 }
 
 #toggle_btn::indicator:unchecked {
-    background-color: #6E6F72; 
-    image: url(static/btn_icon/switch_off.png); 
+    background-color: #6E6F72;
 }
 
 #toggle_btn::indicator:checked {
-    background-color: #D9D9D9; 
-    image: url(static/btn_icon/switch_on.png);
+    background-color: #D9D9D9;
 }
 
 #toggle_btn:focus {
