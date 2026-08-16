@@ -10,6 +10,7 @@ class StartPage(QWidget):
 
         self.text_title = QLabel()
         self.text_title.setObjectName("text_title")
+        self.text_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.text = QLabel()
         self.text.setObjectName("text")
@@ -38,7 +39,7 @@ class StartPage(QWidget):
         )
         self.continue_button.setText(self.tr("Продолжить"))
 
-    def changeEvent(self, event: QEvent) -> None:  # noqa: N802
+    def changeEvent(self, event: QEvent) -> None:  # pyright: ignore[reportIncompatibleMethodOverride] # noqa: N802
         if event.type() == QEvent.Type.LanguageChange:
             self.retranslate_ui()
         super().changeEvent(event)

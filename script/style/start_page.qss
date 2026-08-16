@@ -1,0 +1,40 @@
+/*Вскоре будет изменен, и для каждого файла page_....py будет свой page_....qss*/
+
+QMainWindow {
+    background-color: #323232;
+    font-family: Inter;
+    padding: 0px;
+    margin: 0px;
+}
+
+
+#text_title {
+    color: #EDE9E9;
+    font-size: 36px;
+    font-weight: 900;
+    padding: 15px;
+}
+
+#text {
+    color: #EDE9E9;
+    font-size: 20px;
+    font-weight: 300;
+    padding: 40px;
+}
+
+#continue_btn {
+    background-color: #6E6F72;
+    color: #EDE9E9;
+    border-radius: 18px;
+    padding: 10px 20px;
+    font-size: 24px;
+    font-weight: 900;
+}
+
+#continue_btn:hover {
+    background-color: #878484;
+}
+
+#continue_btn:pressed {
+    background-color: #171717;
+}

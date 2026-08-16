@@ -38,7 +38,8 @@ LockedFace/
 ├── LockedFace.exe
 ├── static/             # иконки
 ├── script/style/       # QSS
-├── translations/       # будущие lockedface_<locale>.qm
+├── translations/
+│   └── en/             # lockedface_en.ts и lockedface_en.qm
 └── ...                 # библиотеки PyInstaller
 ```
 

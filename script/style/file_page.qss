@@ -1,0 +1,18 @@
+/*file_path*/
+#file_scroll {
+    background-color: #1e1e1e;
+    border: none;
+}
+
+#file_card {
+    background-color: #2b2b2b;
+    color: white;
+}
+
+#add_file_btn {
+    background-color: white;
+    color: black;
+    padding: 10px 40px;
+    border-radius: 15px;
+    font-weight: bold;
+}

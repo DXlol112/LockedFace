@@ -22,9 +22,10 @@ def install_translation(app: QApplication, locale: str | None = None) -> QTransl
     The Russian source texts remain visible when no translation is available.
     ``locale`` is primarily useful for tests and a future language selector.
     """
-    locale_name = locale or QLocale.system().name()
-    candidates = (locale_name, locale_name.split("_", maxsplit=1)[0])
-    translations_dir = get_application_dir() / TRANSLATIONS_DIR
+    locale_name = (locale or QLocale.system().name()).replace("-", "_")
+    language_code = locale_name.split("_", maxsplit=1)[0].lower()
+    candidates = (locale_name, language_code)
+    translations_dir = get_application_dir() / TRANSLATIONS_DIR / language_code
 
     for candidate in dict.fromkeys(candidates):
         translator = QTranslator(app)

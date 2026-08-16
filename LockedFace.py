@@ -67,9 +67,18 @@ class MainWindow(QMainWindow):
 
 
 def load_stylesheet(app: QApplication) -> None:
-    stylesheet_path = Path("script/style/all_project.qss")
-    with stylesheet_path.open("r", encoding="utf-8") as file:
-        app.setStyleSheet(file.read())
+    stylesheet_dir = Path("script/style")
+    stylesheet_files = (
+        "start_page.qss",
+        "main_page.qss",
+        "settings_page.qss",
+        "file_page.qss",
+    )
+    stylesheet = "\n".join(
+        (stylesheet_dir / filename).read_text(encoding="utf-8")
+        for filename in stylesheet_files
+    )
+    app.setStyleSheet(stylesheet)
 
 
 def main() -> int:
