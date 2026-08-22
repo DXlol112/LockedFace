@@ -80,8 +80,7 @@
 
 #advanced_settings_content {
     background-color: #8a8888;
-    border: 1px solid #4A4A4A;
-    border-radius: 10px;
+
 }
 
 #advanced_settings_placeholder {
@@ -99,7 +98,7 @@ QScrollBar:vertical {
 QScrollBar::handle:vertical {
     background: #6E6F72;
     min-height: 28px;
-    border-radius: 5px;
+    border-radius: 3px;
 }
 
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from PyQt6.QtCore import QEvent, QSize, Qt, QUrl, QVariantAnimation
-from PyQt6.QtGui import QDesktopServices, QIcon, QPixmap, QTransform
+from PyQt6.QtCore import QEvent, QSize, Qt, QUrl
+from PyQt6.QtGui import QDesktopServices, QIcon, QPixmap
 from PyQt6.QtWidgets import (
     QCheckBox,
     QFrame,
@@ -15,6 +15,7 @@ from PyQt6.QtWidgets import (
 )
 
 from script.core import get_application_dir, load_config, update_config
+from script.style.animations import RotateIconAnimation
 
 
 class SettingsPage(QWidget):
@@ -128,22 +129,25 @@ class SettingsPage(QWidget):
         content_layout.addLayout(toggle_layout)
         content_layout.addSpacing(20)
 
-        self.advanced_settings_label, self.advanced_settings_button = self._add_angle(
+        (
+            self.advanced_settings_label,
+            self.advanced_settings_button,
+            self.advanced_content,
+            self.advanced_placeholder_label,
+        ) = self._add_advanced_settings(
             content_layout,
             "static/btn_icon/angle-small-down.png",
             (40, 40),
             self.advanced_settings_open,
         )
-        self._advanced_icon = QPixmap("static/btn_icon/angle-small-down.png")
-        self._advanced_icon_size = QSize(40, 40)
-        self._advanced_icon_angle = 0.0
-        self._advanced_icon_animation = QVariantAnimation(self)
-        self._advanced_icon_animation.setDuration(180)
-        self._advanced_icon_animation.valueChanged.connect(self._set_advanced_icon_angle)
+        self._advanced_icon_animation = RotateIconAnimation(
+            self.advanced_settings_button,
+            "static/btn_icon/angle-small-down.png",
+            QSize(40, 40),
+            parent=self,
+        )
 
-        self.advanced_content = self._create_advanced_content()
         self.advanced_content.hide()
-        content_layout.addWidget(self.advanced_content)
         content_layout.addStretch()
 
         self.retranslate_ui()
@@ -185,18 +189,22 @@ class SettingsPage(QWidget):
         layout.addLayout(row)
         return label, toggle
 
-    def _add_angle(
+    def _add_advanced_settings(
         self,
         layout: QVBoxLayout,
         icon_path: str,
         icon_size: tuple[int, int],
         callback,
-    ) -> tuple[QLabel, QPushButton]:  # type: ignore[no-untyped-def]
-        """Add a bottom settings card with a rotating disclosure button."""
+    ) -> tuple[QLabel, QPushButton, QFrame, QLabel]:  # type: ignore[no-untyped-def]
+        """Add an expandable settings card and its content as one widget."""
         card = QFrame()
         card.setObjectName("advanced_settings_card")
-        card_layout = QHBoxLayout(card)
-        card_layout.setContentsMargins(16, 8, 8, 8)
+        card_layout = QVBoxLayout(card)
+        card_layout.setContentsMargins(0, 0, 0, 0)
+        card_layout.setSpacing(0)
+
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(16, 8, 8, 8)
 
         label = QLabel()
         label.setObjectName("advanced_settings_label")
@@ -207,11 +215,24 @@ class SettingsPage(QWidget):
         button.setFixedSize(48, 48)
         button.clicked.connect(callback)
 
-        card_layout.addWidget(label)
-        card_layout.addStretch()
-        card_layout.addWidget(button)
+        header_layout.addWidget(label)
+        header_layout.addStretch()
+        header_layout.addWidget(button)
+        card_layout.addLayout(header_layout)
+
+        content = QFrame()
+        content.setObjectName("advanced_settings_content")
+        content_layout = QVBoxLayout(content)
+        content_layout.setContentsMargins(16, 14, 16, 14)
+
+        content_label = QLabel()
+        content_label.setObjectName("advanced_settings_placeholder")
+        content_label.setWordWrap(True)
+        content_layout.addWidget(content_label)
+        card_layout.addWidget(content)
+
         layout.addWidget(card)
-        return label, button
+        return label, button, content, content_label
 
     def _create_separator(self) -> QFrame:
         line = QFrame()
@@ -220,17 +241,6 @@ class SettingsPage(QWidget):
         line.setObjectName("line_sep")
         line.setFixedHeight(1)
         return line
-
-    def _create_advanced_content(self) -> QFrame:
-        content = QFrame()
-        content.setObjectName("advanced_settings_content")
-        layout = QVBoxLayout(content)
-        layout.setContentsMargins(16, 14, 16, 14)
-        self.advanced_placeholder_label = QLabel()
-        self.advanced_placeholder_label.setObjectName("advanced_settings_placeholder")
-        self.advanced_placeholder_label.setWordWrap(True)
-        layout.addWidget(self.advanced_placeholder_label)
-        return content
 
     def update_checker(self) -> None:
         # A release API can be connected here without mixing network code into the UI.
@@ -245,25 +255,13 @@ class SettingsPage(QWidget):
     def advanced_settings_open(self) -> None:
         self._advanced_expanded = not self._advanced_expanded
         self.advanced_content.setVisible(self._advanced_expanded)
-        self._rotate_advanced_icon(90.0 if self._advanced_expanded else 0.0)
-
-    def _rotate_advanced_icon(self, target_angle: float) -> None:
-        self._advanced_icon_animation.stop()
-        self._advanced_icon_animation.setStartValue(self._advanced_icon_angle)
-        self._advanced_icon_animation.setEndValue(target_angle)
-        self._advanced_icon_animation.start()
-
-    def _set_advanced_icon_angle(self, angle: float) -> None:
-        self._advanced_icon_angle = float(angle)
-        if self._advanced_icon.isNull():
-            return
-
-        rotated_icon = self._advanced_icon.transformed(
-            QTransform().rotate(self._advanced_icon_angle),
-            Qt.TransformationMode.SmoothTransformation,
+        self._advanced_icon_animation.rotate_to(
+            90.0 if self._advanced_expanded else 0.0
         )
-        self.advanced_settings_button.setIcon(QIcon(rotated_icon))
-        self.advanced_settings_button.setIconSize(self._advanced_icon_size)
+
+    def _set_advanced_settings_text(self, title: str, content: str) -> None:
+        self.advanced_settings_label.setText(title)
+        self.advanced_placeholder_label.setText(content)
 
     def retranslate_ui(self) -> None:
         self.version_label.setText(self.tr("Версия: 1.0.0"))
@@ -272,9 +270,8 @@ class SettingsPage(QWidget):
         self.source_code_label.setText(self.tr("Исходный код"))
         self.gaze_label.setText(self.tr("Включить отслеживание глаз"))
         self.glasses_label.setText(self.tr("Наличие очков"))
-        self.advanced_settings_label.setText(self.tr("Дополнительные настройки"))
-        self.advanced_placeholder_label.setText(
-            self.tr("Здесь появятся дополнительные настройки.")
+        self._set_advanced_settings_text(self.tr("Дополнительные настройки"),
+            self.tr("Здесь появятся дополнительные настройки."),
         )
 
     def changeEvent(self, event: QEvent) -> None:  # pyright: ignore[reportIncompatibleMethodOverride] # noqa: N802
