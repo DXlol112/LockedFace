@@ -16,7 +16,7 @@ from PyQt6.QtWidgets import (
 )
 
 from script.UI.support_UI import WinDialog
-from script.core import VideoThread, load_config, update_config
+from script.core import VideoThread, __version__, load_config, update_config
 
 
 class MainPage(QWidget):
@@ -326,7 +326,9 @@ class MainPage(QWidget):
     def retranslate_ui(self) -> None:
         self.start_button.setText(self.tr("СТАРТ"))
         self.info_label.setText(self.tr("Перед началом выберите файл"))
-        self.version_label.setText(self.tr("Версия: 1.0.0"))
+        self.version_label.setText(
+            self.tr("Версия: 1.0.0").replace("1.0.0", __version__)
+        )
         self.stop_button.setText(self.tr("Стоп"))
         self.pause_button.setText(self.tr("Пауза"))
 

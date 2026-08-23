@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from script.core import get_application_dir, load_config, update_config
+from script.core import __version__, get_application_dir, load_config, update_config
 from script.style.animations import RotateIconAnimation
 
 
@@ -245,7 +245,6 @@ class SettingsPage(QWidget):
         return line
 
     def update_checker(self) -> None:
-        # A release API can be connected here without mixing network code into the UI.
         return None
 
     def open_folder(self) -> None:
@@ -266,7 +265,9 @@ class SettingsPage(QWidget):
         self.advanced_placeholder_label.setText(content)
 
     def retranslate_ui(self) -> None:
-        self.version_label.setText(self.tr("Версия: 1.0.0"))
+        self.version_label.setText(
+            self.tr("Версия: 1.0.0").replace("1.0.0", __version__)
+        )
         self.update_label.setText(self.tr("Проверить обновления"))
         self.open_folder_label.setText(self.tr("Открыть папку приложения"))
         self.source_code_label.setText(self.tr("Исходный код"))

@@ -99,7 +99,7 @@
         <translation>Select a file before starting</translation>
     </message>
     <message>
-        <location filename="../../script/UI/main_page.py" line="329"/>
+        <location filename="../../script/UI/main_page.py" line="330"/>
         <source>Версия: 1.0.0</source>
         <translation>Version: 1.0.0</translation>
     </message>
@@ -112,7 +112,7 @@
 <context>
     <name>SettingsPage</name>
     <message>
-        <location filename="../../script/UI/settings_page.py" line="269"/>
+        <location filename="../../script/UI/settings_page.py" line="270"/>
         <source>Версия: 1.0.0</source>
         <translation>Version: 1.0.0</translation>
     </message>
