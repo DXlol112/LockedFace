@@ -201,10 +201,11 @@ class SettingsPage(QWidget):
         card.setObjectName("advanced_settings_card")
         card_layout = QVBoxLayout(card)
         card_layout.setContentsMargins(0, 0, 0, 0)
-        card_layout.setSpacing(0)
+        card_layout.setSpacing(10)
 
         header_layout = QHBoxLayout()
-        header_layout.setContentsMargins(16, 8, 8, 8)
+        header_layout.setContentsMargins(10, 0, 5, 0)
+        header_layout.setSpacing(10)
 
         label = QLabel()
         label.setObjectName("advanced_settings_label")
@@ -223,7 +224,8 @@ class SettingsPage(QWidget):
         content = QFrame()
         content.setObjectName("advanced_settings_content")
         content_layout = QVBoxLayout(content)
-        content_layout.setContentsMargins(16, 14, 16, 14)
+        content_layout.setContentsMargins(15, 0, 5, 0)
+        content_layout.setSpacing(10)
 
         content_label = QLabel()
         content_label.setObjectName("advanced_settings_placeholder")

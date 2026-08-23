@@ -52,15 +52,13 @@
 }
 
 #advanced_settings_card {
-    background-color: #292929;
-    border: 1px solid #4A4A4A;
-    border-radius: 10px;
+    background-color: transparent;
+    border: none;
 }
 
 #advanced_settings_label {
     color: #EDE9E9;
     font-size: 20px;
-    font-weight: 600;
     border: none;
 }
 
@@ -79,26 +77,26 @@
 }
 
 #advanced_settings_content {
-    background-color: #8a8888;
-
+    background-color: transparent;
+    border: none;
 }
 
 #advanced_settings_placeholder {
-    color: #C6C6C6;
+    color: #EDE9E9;
     font-size: 16px;
     border: none;
 }
 
 QScrollBar:vertical {
     background: #8f8c8c;
-    width: 10px;
-    margin: 2px;
+    width: 2px;
+    margin: 0px;
 }
 
 QScrollBar::handle:vertical {
     background: #6E6F72;
     min-height: 28px;
-    border-radius: 3px;
+    border-radius: 6px;
 }
 
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
