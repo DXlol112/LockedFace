@@ -1,10 +1,14 @@
 """LockedFace application package."""
 
 from script.core import (
-    get_base_dir,
-    get_resource_path,
+    get_application_dir,
+    get_data_dir,
     get_config_path,
     get_log_dir,
+    get_media_dir,
+    load_config,
+    save_config,
+    update_config,
     VideoThread
 )
 
@@ -18,10 +22,14 @@ from script.UI import (
 
 __all__ = [
     # Core utilities
-    "get_base_dir",
-    "get_resource_path",
+    "get_application_dir",
+    "get_data_dir",
     "get_config_path",
     "get_log_dir",
+    "get_media_dir",
+    "load_config",
+    "save_config",
+    "update_config",
     # Core processing
     "VideoThread",
     # UI pages

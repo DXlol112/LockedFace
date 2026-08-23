@@ -1,0 +1,128 @@
+/*settings_page*/
+#header_sett {
+    background-color: #252323;
+    padding: 0px;
+    margin: 0px;
+}
+#back_btn {
+    background-color: transparent;
+    border: none;
+}
+#back_btn:hover {
+    background-color: #2A2A2A;
+    border-radius: 4px;
+}
+#back_btn:pressed {
+    background-color: #3A3A3A;
+}
+#name_set {
+    color: #FFFFFF;
+    font-weight: 900;
+    font-size: 32px;
+}
+#ver_set {
+    color: #A6A6A6;
+    font-size: 18px;
+    font-weight: 400;
+}
+#text_settings {
+    color: #EDE9E9;
+    font-size: 20px;
+}
+#settings_btn {
+    border: none;
+    background-color: transparent;
+}
+#settings_btn:hover {
+    background-color: #2a2a2a;
+    border-radius: 3px;
+}
+#line_sep{
+    border: none;
+    background-color: #818181;
+}
+
+#settings_scroll {
+    background-color: #323232;
+    border: none;
+}
+
+#settings_content {
+    background-color: #323232;
+}
+
+#advanced_settings_card {
+    background-color: transparent;
+    border: none;
+}
+
+#advanced_settings_label {
+    color: #EDE9E9;
+    font-size: 20px;
+    border: none;
+}
+
+#advanced_settings_button {
+    background-color: transparent;
+    border: none;
+}
+
+#advanced_settings_button:hover {
+    background-color: #3A3A3A;
+    border-radius: 8px;
+}
+
+#advanced_settings_button:pressed {
+    background-color: #171717;
+}
+
+#advanced_settings_content {
+    background-color: transparent;
+    border: none;
+}
+
+#advanced_settings_placeholder {
+    color: #EDE9E9;
+    font-size: 16px;
+    border: none;
+}
+
+QScrollBar:vertical {
+    background: #8f8c8c;
+    width: 2px;
+    margin: 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: #6E6F72;
+    min-height: 28px;
+    border-radius: 6px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+#toggle_btn {
+    spacing: 0px;
+    background: transparent;
+}
+
+#toggle_btn::indicator {
+    width: 50px;
+    height: 26px;
+    border-radius: 13px;
+}
+
+#toggle_btn::indicator:unchecked {
+    background-color: #6E6F72;
+}
+
+#toggle_btn::indicator:checked {
+    background-color: #D9D9D9;
+}
+
+#toggle_btn:focus {
+    border: none;
+    outline: none;
+}

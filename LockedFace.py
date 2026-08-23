@@ -1,64 +1,36 @@
-import os
-# Отключение аппаратного ускорения видео 
-os.environ['QT_XCB_GL_INTEGRATION'] = 'none'
-os.environ['QT_DEBUG_PLUGINS'] = '0'
-import traceback
-import sys
+"""Application entry point."""
+
+from __future__ import annotations
+
 import logging
-from PyQt6.QtWidgets import QApplication, QStackedWidget, QMainWindow
-from PyQt6.QtGui import QIcon
-from PyQt6.QtCore import qInstallMessageHandler, QtMsgType
+import multiprocessing
+import os
+import sys
+import traceback
 from pathlib import Path
 
-from script import (
-    StartPage,
-    MainPage,
-    SettingsPage,
-    FilePage,
-    get_resource_path,
-    get_log_dir
-)
+# These variables must be set before importing Qt or MediaPipe.
+os.environ["QT_XCB_GL_INTEGRATION"] = "none"
+os.environ["QT_DEBUG_PLUGINS"] = "0"
 
-def qt_message_handler(mode, context, message):
-    logger = logging.getLogger("Qt")
-    if mode == QtMsgType.QtDebugMsg:
-        logger.debug(message)
-    elif mode == QtMsgType.QtInfoMsg:
-        logger.info(message)
-    elif mode == QtMsgType.QtWarningMsg:
-        logger.warning(message)
-    elif mode == QtMsgType.QtCriticalMsg:
-        logger.error(message)
-    elif mode == QtMsgType.QtFatalMsg:
-        logger.critical(message)
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedWidget
 
-def setup_logging():
-    log_dir = get_log_dir()
-    log_file = log_dir / "app.log"
+from script import FilePage, MainPage, SettingsPage, StartPage, get_application_dir, get_log_dir
+from script.core.i18n import install_translation
+from script.core.logger import setup_logging
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - [%(levelname)s] - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        handlers=[
-            logging.FileHandler(log_file, encoding="utf-8", mode="w"),
-            logging.StreamHandler(sys.__stdout__)
-        ]
-    )
 
-    logging.captureWarnings(True)
-    logging.getLogger("py.warnings").setLevel(logging.CRITICAL)
-    logging.getLogger("google").setLevel(logging.ERROR)
-    logging.getLogger("mediapipe").setLevel(logging.ERROR)
+logger = logging.getLogger(__name__)
+APP_NAME = "LockedFace"
 
-    qInstallMessageHandler(qt_message_handler)
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-        self.setWindowTitle("LockedFace")
-        self.setWindowIcon(QIcon(str(get_resource_path("static/icon/logo_icon.ico"))))
+        self.setWindowTitle(APP_NAME)
+        self.setWindowIcon(QIcon("static/icon/logo_icon.ico"))
         self.setFixedSize(800, 600)
 
         self.stack = QStackedWidget()
@@ -74,56 +46,67 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self.settings_page)
         self.stack.addWidget(self.file_page)
 
-    def go_to_main(self):
+    def go_to_main(self) -> None:
         self.stack.setCurrentWidget(self.main_page)
 
-    def go_to_settings(self):
+    def go_to_settings(self) -> None:
         self.stack.setCurrentWidget(self.settings_page)
 
-    def go_to_file(self):
+    def go_to_file(self) -> None:
         self.stack.setCurrentWidget(self.file_page)
-    
-    def go_back(self):
-        if self.stack.currentWidget() == self.file_page:
+
+    def go_back(self) -> None:
+        if self.stack.currentWidget() is self.file_page:
             self.file_page.reset_delete_button()
             self.file_page.refresh_gallery()
-        
+
         self.stack.setCurrentWidget(self.main_page)
 
-    def start_program(self):
-        print("Start program")
-
-def load_stylesheet(app):
-    stylesheet_path = get_resource_path("script/style/all_project.qss")
-    with open(stylesheet_path, "r", encoding="utf-8") as f:
-        app.setStyleSheet(f.read())
+    def start_program(self) -> None:
+        logger.info("Video monitoring started")
 
 
-def main():
-    import multiprocessing
+def load_stylesheet(app: QApplication) -> None:
+    stylesheet_dir = Path("script/style")
+    stylesheet_files = (
+        "start_page.qss",
+        "main_page.qss",
+        "settings_page.qss",
+        "file_page.qss",
+    )
+    stylesheet = "\n".join(
+        (stylesheet_dir / filename).read_text(encoding="utf-8")
+        for filename in stylesheet_files
+    )
+    app.setStyleSheet(stylesheet)
+
+
+def main() -> int:
     multiprocessing.freeze_support()
-    
-    setup_logging()
-    print("Start LockedFace")
+    os.chdir(get_application_dir())
 
     app = QApplication(sys.argv)
+    app.setApplicationName(APP_NAME)
+    app.setOrganizationName(APP_NAME)
+
+    setup_logging()
+    # Keep a reference for the whole lifetime of the application.
+    app.translator = install_translation(app)  # type: ignore[attr-defined]
 
     load_stylesheet(app)
 
     window = MainWindow()
     window.show()
+    logger.info("%s started", APP_NAME)
 
-    app.exec()
-    print("close LockedFace")
-    
-    sys.stdout.flush()
-    sys.stderr.flush()
+    return app.exec()
+
 
 if __name__ == "__main__":
     try:
-        main()
-    except Exception as e:
-        log_dir = get_log_dir()
-        crash_log = log_dir / "crash.log"
-        with open(crash_log, "w", encoding="utf-8") as f:
-            f.write(traceback.format_exc())
+        sys.exit(main())
+    except Exception:
+        crash_log = get_log_dir() / "crash.log"
+        crash_log.write_text(traceback.format_exc(), encoding="utf-8")
+        logging.getLogger(__name__).exception("Unexpected application shutdown")
+        raise

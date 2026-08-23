@@ -1,43 +1,49 @@
-# Инструкция по созданию EXE файла LockedFace
+# Сборка one-folder версии
 
-## Предварительная подготовка
+Проект собирается только в режим **one-folder**: распространяйте целиком
+папку из `dist`, а не один `LockedFace.exe`. В ней ресурсы лежат в известных
+местах рядом с исполняемым файлом, поэтому приложению не нужна отдельная
+логика поиска временных каталогов упаковщика.
 
-Убедись, что установлены все зависимости:
+## Подготовка
+
 ```powershell
-# Активируй виртуальное окружение
 .venv\Scripts\Activate.ps1
-
-# Установи зависимости (если еще не установлены)
 pip install -r requirements.txt
-pip install pyinstaller
+pip install pyinstaller auto-py-to-exe
 ```
 
-**Важно:** Проект использует:
-- **mediapipe 0.10.13** - для определения лиц
-- **PyQt6** - для интерфейса
-- **OpenCV** - для обработки видео
-- **ffplayer** - для воспроизведения звука
+Если добавлялись переводы, сначала скомпилируйте нужные `.ts` в `.qm` по
+[инструкции для переводов](../../translations/README.md).
 
-## Способ 1: Использование auto-py-to-exe (GUI)
+## Через auto-py-to-exe
 
-### Вариант 1a: С конфигом (быстро)
+1. Запустите `auto-py-to-exe` из корня репозитория.
+2. Нажмите **Load config** и выберите
+   `docs\GuideBuild\bulid_config.json`.
+3. Нажмите **Convert .py to .exe**.
 
-1. Убедись, что виртуальное окружение активировано:
-   ```powershell
-   .venv\Scripts\Activate.ps1
-   ```
+Конфигурация включает `--contents-directory .`: PyInstaller кладёт данные и
+зависимости в папку рядом с `LockedFace.exe`, а не в `_internal`. Она также
+упаковывает `static`, `script/style`, `translations` и весь пакет `mediapipe`.
 
-2. Запусти auto-py-to-exe:
-   ```powershell
-   auto-py-to-exe
-   ```
+## Результат
 
-3. Загрузи конфиг из файла `GuideBuild/build_config.json`:
-   - Нажми кнопку "Load config" внизу
-   - Выбери файл конфига
-   - Все параметры будут заполнены автоматически
+После сборки передавайте пользователю папку `output\LockedFace` (или папку
+`dist\LockedFace`, если собираете через командный PyInstaller) целиком. Её
+важные части выглядят так:
 
-4. Нажми **Convert .py to .exe** (синяя кнопка внизу)
+```text
+LockedFace/
+├── LockedFace.exe
+├── static/             # иконки
+├── script/style/       # QSS
+├── translations/
+│   └── en/             # lockedface_en.ts и lockedface_en.qm
+└── ...                 # библиотеки PyInstaller
+```
 
-
-
+Настройки, логи и выбранные пользователем медиа не попадают в каталог
+установки. Windows хранит их в `QStandardPaths.AppLocalDataLocation` (обычно
+в `%LOCALAPPDATA%\LockedFace\LockedFace`). Для портативного запуска или
+тестов можно задать переменную окружения `LOCKEDFACE_DATA_DIR`.

@@ -1,4 +1,4 @@
-/* static/styles/dialog_style.qss */
+/* styles/dialog_style.qss */
 QWidget#overlay {
     background-color: rgba(0, 0, 0, 0.6);
 }
