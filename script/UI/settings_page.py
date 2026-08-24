@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import logging
+
+from packaging.version import Version
+
 from PyQt6.QtCore import QEvent, QSize, Qt, QUrl
 from PyQt6.QtGui import QDesktopServices, QIcon, QPixmap
 from PyQt6.QtWidgets import (
@@ -14,8 +18,19 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from script.core import __version__, get_application_dir, load_config, update_config
+from script.core import (
+    __version__,
+    get_application_dir,
+    get_latest_version,
+    load_config,
+    update_config,
+)
 from script.style.animations import RotateIconAnimation
+
+from script.UI.support_UI import WinDialog
+
+
+logger = logging.getLogger(__name__)
 
 
 class SettingsPage(QWidget):
@@ -245,7 +260,41 @@ class SettingsPage(QWidget):
         return line
 
     def update_checker(self) -> None:
-        return None
+        try:
+            last_version = get_latest_version()
+
+            current = Version(__version__.removeprefix("v"))
+            latest = Version(last_version.removeprefix("v"))
+
+            if latest > current:
+                WinDialog(
+                    self,
+                    message=self.tr(
+                        "Доступна новая версия: {latest}\n"
+                        "Установленная версия: {current}"
+                    ).format(latest=last_version, current=__version__),
+                    _open_button=True,
+                    text_open_button=self.tr("Открыть страницу обновления"),
+                    title=self.tr("Обновление"),
+                )
+                return
+
+            WinDialog(
+                self,
+                message=self.tr(
+                    "У вас установлена последняя версия ({version})."
+                ).format(version=__version__),
+                title=self.tr("Обновление"),
+            )
+        except Exception as error:
+            logger.exception("Could not check for updates")
+            WinDialog(
+                self,
+                message=self.tr("Не удалось проверить обновления: {error}").format(
+                    error=str(error) or type(error).__name__
+                ),
+                title=self.tr("Ошибка"),
+            )
 
     def open_folder(self) -> None:
         QDesktopServices.openUrl(QUrl.fromLocalFile(str(get_application_dir())))

@@ -39,3 +39,21 @@ QPushButton#closeButton:hover {
 QPushButton#closeButton:pressed {
     background-color: #bc101e;
 }
+
+QPushButton#openButton {
+    background-color: #4b78d0;
+    border: 1px solid #5d8ae0;
+    border-radius: 6px;
+    color: #ffffff;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+QPushButton#openButton:hover {
+    background-color: #5a86db;
+}
+
+QPushButton#openButton:pressed {
+    background-color: #3d67b8;
+}
