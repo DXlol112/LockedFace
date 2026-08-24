@@ -3,3 +3,4 @@ mediapipe==0.10.13
 numpy>=1.26.4
 PyQt6
 ffpyplayer
+packaging

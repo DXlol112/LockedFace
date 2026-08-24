@@ -8,6 +8,7 @@ from script.core.path_utils import (
     get_media_dir,
 )
 from script.core.config import load_config, save_config, update_config
+from script.core.version import __version__, get_latest_version, get_lastest_verison
 
 from script.core.def_collection import VideoThread
 
@@ -20,5 +21,8 @@ __all__ = [
     "load_config",
     "save_config",
     "update_config",
-    "VideoThread"
+    "VideoThread",
+    "__version__",
+    "get_latest_version",
+    "get_lastest_verison",
 ]
