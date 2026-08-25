@@ -51,7 +51,7 @@ class WrappingPushButton(QPushButton):
     def hasHeightForWidth(self) -> bool:  # noqa: N802
         return True
 
-    def heightForWidth(self, width: int) -> int:  # noqa: N802
+    def heightForWidth(self, width: int) -> int:  # type: ignore # noqa: N802
         return max(
             self.fontMetrics().height() + self._VERTICAL_PADDING,
             self._text_height(width) + self._VERTICAL_PADDING,
@@ -70,7 +70,7 @@ class WrappingPushButton(QPushButton):
         width = min(self._MINIMUM_WIDTH, self.maximumWidth())
         return QSize(width, self.heightForWidth(width))
 
-    def paintEvent(self, event: QPaintEvent) -> None:  # noqa: N802
+    def paintEvent(self, event: QPaintEvent) -> None:  # type: ignore # noqa: N802
         del event
         option = QStyleOptionButton()
         self.initStyleOption(option)
@@ -79,9 +79,7 @@ class WrappingPushButton(QPushButton):
 
         painter = QStylePainter(self)
         painter.drawControl(QStyle.ControlElement.CE_PushButton, option)
-        text_rect = self.style().subElementRect(
-            QStyle.SubElement.SE_PushButtonContents, option, self
-        )
+        text_rect = self.style().subElementRect(QStyle.SubElement.SE_PushButtonContents, option, self) # pyright: ignore[reportOptionalMemberAccess]
         painter.setPen(option.palette.buttonText().color())
         painter.drawText(text_rect, self._text_flags(), text)
 

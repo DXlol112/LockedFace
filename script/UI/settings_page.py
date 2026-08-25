@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Sequence
 
 from packaging.version import Version
 
@@ -8,6 +9,7 @@ from PyQt6.QtCore import QEvent, QSize, Qt, QUrl
 from PyQt6.QtGui import QDesktopServices, QIcon, QPixmap
 from PyQt6.QtWidgets import (
     QCheckBox,
+    QComboBox,
     QFrame,
     QGridLayout,
     QHBoxLayout,
@@ -31,6 +33,59 @@ from script.UI.support_UI import WinDialog
 
 
 logger = logging.getLogger(__name__)
+
+
+class _MiniDropdown(QComboBox):
+    """A compact combo box with its value painted above the native control."""
+
+    def __init__(self, icon_path: str, icon_size: tuple[int, int]) -> None:
+        super().__init__()
+        self._icon_size = QSize(*icon_size)
+
+        self._icon_label = QLabel(self)
+        self._icon_label.setObjectName("mini_dropdown_icon")
+        self._icon_label.setAttribute(
+            Qt.WidgetAttribute.WA_TransparentForMouseEvents, True
+        )
+        self._icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._icon_label.setPixmap(QIcon(icon_path).pixmap(self._icon_size))
+
+        self._value_label = QLabel(self)
+        self._value_label.setObjectName("mini_dropdown_value")
+        self._value_label.setAttribute(
+            Qt.WidgetAttribute.WA_TransparentForMouseEvents, True
+        )
+        self._value_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.currentTextChanged.connect(self._show_selected_value)
+
+    def _show_selected_value(self, value: str) -> None:
+        self._value_label.setText(value)
+        self._raise_overlays()
+
+    def _raise_overlays(self) -> None:
+        self._icon_label.raise_()
+        self._value_label.raise_()
+
+    def resizeEvent(self, event) -> None:  # type: ignore[no-untyped-def] # noqa: N802
+        super().resizeEvent(event)
+        icon_width = self._icon_size.width()
+        icon_height = self._icon_size.height()
+        self._icon_label.setGeometry(
+            self.width() - icon_width,
+            (self.height() - icon_height) // 2,
+            icon_width,
+            icon_height,
+        )
+        self._value_label.setGeometry(0, 0, self.width() - icon_width, self.height())
+        self._raise_overlays()
+
+    def showPopup(self) -> None:  # noqa: N802
+        super().showPopup()
+        popup = self.view().window()
+        popup.setFixedWidth(self.width())
+        self.view().setFixedWidth(self.width())
+        popup.raise_()
+        self._raise_overlays()
 
 
 class SettingsPage(QWidget):
@@ -127,6 +182,16 @@ class SettingsPage(QWidget):
         toggle_layout = QVBoxLayout()
         toggle_layout.setContentsMargins(10, 0, 5, 0)
         toggle_layout.setSpacing(10)
+        self.translations_label, self.translations_select = (
+            self._add_mini_dropdown_menu(
+                toggle_layout,
+                values=("RU", "EN"),
+                icon_path="static/btn_icon/angle-small-down.png",
+                icon_size=(20, 20),
+                config_key="translations_select",
+            )
+        )
+
         self.gaze_label, self.gaze_toggle = self._add_toggle(
             toggle_layout, "gaze_enabled"
         )
@@ -251,6 +316,57 @@ class SettingsPage(QWidget):
         layout.addWidget(card)
         return label, button, content, content_label
 
+    def _add_mini_dropdown_menu(
+        self,
+        layout: QVBoxLayout,
+        values: Sequence[str],
+        icon_path: str,
+        icon_size: tuple[int, int],
+        config_key: str,
+    ) -> tuple[QLabel, QComboBox]:
+        """Add a compact dropdown and persist its value under ``config_key``."""
+        items = tuple(values)
+        if not items:
+            raise ValueError("Dropdown values cannot be empty")
+
+        icon_width, icon_height = icon_size
+        if icon_width <= 0 or icon_height <= 0:
+            raise ValueError("Dropdown icon size must be positive")
+
+        row = QHBoxLayout()
+        label = QLabel()
+        label.setObjectName("text_settings")
+
+        dropdown = _MiniDropdown(icon_path, icon_size)
+        dropdown.setObjectName("mini_dropdown")
+        dropdown.addItems(items)
+        dropdown.setFixedSize(50, 26)
+        dropdown.view().setObjectName("mini_dropdown_list")
+        dropdown.view().setFixedWidth(50)
+
+        saved_value = str(load_config().get(config_key, items[0]))
+        dropdown.setCurrentText(saved_value if saved_value in items else items[0])
+        dropdown._show_selected_value(dropdown.currentText())
+        dropdown.currentTextChanged.connect(
+            lambda value: self._save_dropdown_selection(config_key, value, items)
+        )
+
+        row.addWidget(label)
+        row.addStretch()
+        row.addWidget(dropdown)
+        layout.addLayout(row)
+        return label, dropdown
+
+    def _save_dropdown_selection(
+        self,
+        config_key: str,
+        value: str,
+        allowed_values: Sequence[str],
+    ) -> None:
+        """Persist a value emitted by a configured mini dropdown."""
+        if value in allowed_values:
+            update_config(**{config_key: value})
+
     def _create_separator(self) -> QFrame:
         line = QFrame()
         line.setFrameShape(QFrame.Shape.HLine)
@@ -320,6 +436,7 @@ class SettingsPage(QWidget):
         self.update_label.setText(self.tr("Проверить обновления"))
         self.open_folder_label.setText(self.tr("Открыть папку приложения"))
         self.source_code_label.setText(self.tr("Исходный код"))
+        self.translations_label.setText(self.tr("Перевод"))
         self.gaze_label.setText(self.tr("Включить отслеживание глаз"))
         self.glasses_label.setText(self.tr("Наличие очков"))
         self._set_advanced_settings_text(self.tr("Дополнительные настройки"),

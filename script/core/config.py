@@ -16,6 +16,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "gaze_enabled": False,
     "glasses_enabled": False,
     "work_time_seconds": 0,
+    "translations_select": "RU",
 }
 
 
