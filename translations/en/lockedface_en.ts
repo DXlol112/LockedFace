@@ -109,75 +109,80 @@
 </context><context>
     <name>SettingsPage</name>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="272" />
+        <location filename="..\..\script\UI\settings_page.py" line="396" />
         <source>Доступна новая версия: {latest}
 Установленная версия: {current}</source>
         <translation>A new version is available: {latest}
 Installed version: {current}</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="277" />
+        <location filename="..\..\script\UI\settings_page.py" line="401" />
         <source>Открыть страницу обновления</source>
         <translation>Open the update page</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="287" />
-        <location filename="..\..\script\UI\settings_page.py" line="278" />
+        <location filename="..\..\script\UI\settings_page.py" line="411" />
+        <location filename="..\..\script\UI\settings_page.py" line="402" />
         <source>Обновление</source>
         <translation>Update</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="284" />
+        <location filename="..\..\script\UI\settings_page.py" line="408" />
         <source>У вас установлена последняя версия ({version}).</source>
         <translation>You have the latest version installed ({version}).</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="293" />
+        <location filename="..\..\script\UI\settings_page.py" line="417" />
         <source>Не удалось проверить обновления: {error}</source>
         <translation>Could not check for updates: {error}</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="296" />
+        <location filename="..\..\script\UI\settings_page.py" line="420" />
         <source>Ошибка</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="317" />
+        <location filename="..\..\script\UI\settings_page.py" line="442" />
         <source>Версия: 1.0.0</source>
         <translation>Version: 1.0.0</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="319" />
+        <location filename="..\..\script\UI\settings_page.py" line="444" />
         <source>Проверить обновления</source>
         <translation>Check for Updates</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="320" />
+        <location filename="..\..\script\UI\settings_page.py" line="445" />
         <source>Открыть папку приложения</source>
         <translation>Open Application Folder</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="321" />
+        <location filename="..\..\script\UI\settings_page.py" line="446" />
         <source>Исходный код</source>
         <translation>Source Code</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="322" />
+        <location filename="..\..\script\UI\settings_page.py" line="447" />
+        <source>Перевод</source>
+        <translation>Language</translation>
+    </message>
+    <message>
+        <location filename="..\..\script\UI\settings_page.py" line="448" />
         <source>Включить отслеживание глаз</source>
         <translation>Enable Eye Tracking</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="323" />
+        <location filename="..\..\script\UI\settings_page.py" line="449" />
         <source>Наличие очков</source>
         <translation>Wearing Glasses</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="324" />
+        <location filename="..\..\script\UI\settings_page.py" line="450" />
         <source>Дополнительные настройки</source>
         <translation>Advanced Settings</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\settings_page.py" line="325" />
+        <location filename="..\..\script\UI\settings_page.py" line="451" />
         <source>Здесь появятся дополнительные настройки.</source>
         <translation>Additional settings will appear here.</translation>
     </message>
@@ -207,12 +212,12 @@ so your face is clearly and fully visible.</translation>
 </context><context>
     <name>WinDialog</name>
     <message>
-        <location filename="..\..\script\UI\support_UI\win_dialog.py" line="113" />
+        <location filename="..\..\script\UI\support_UI\win_dialog.py" line="111" />
         <source>Сообщение</source>
         <translation>Message</translation>
     </message>
     <message>
-        <location filename="..\..\script\UI\support_UI\win_dialog.py" line="140" />
+        <location filename="..\..\script\UI\support_UI\win_dialog.py" line="138" />
         <source>Открыть</source>
         <translation>Open</translation>
     </message>

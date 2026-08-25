@@ -8,6 +8,7 @@ from packaging.version import Version
 from PyQt6.QtCore import QEvent, QSize, Qt, QUrl
 from PyQt6.QtGui import QDesktopServices, QIcon, QPixmap
 from PyQt6.QtWidgets import (
+    QApplication,
     QCheckBox,
     QComboBox,
     QFrame,
@@ -27,6 +28,7 @@ from script.core import (
     load_config,
     update_config,
 )
+from script.core.i18n import set_application_language
 from script.style.animations import RotateIconAnimation
 
 from script.UI.support_UI import WinDialog
@@ -191,6 +193,7 @@ class SettingsPage(QWidget):
                 config_key="translations_select",
             )
         )
+        self.translations_select.currentTextChanged.connect(self._change_language)
 
         self.gaze_label, self.gaze_toggle = self._add_toggle(
             toggle_layout, "gaze_enabled"
@@ -366,6 +369,11 @@ class SettingsPage(QWidget):
         """Persist a value emitted by a configured mini dropdown."""
         if value in allowed_values:
             update_config(**{config_key: value})
+
+    def _change_language(self, language: str) -> None:
+        app = QApplication.instance()
+        if app is not None:
+            set_application_language(app, language)
 
     def _create_separator(self) -> QFrame:
         line = QFrame()

@@ -16,8 +16,16 @@ os.environ["QT_DEBUG_PLUGINS"] = "0"
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedWidget
 
-from script import FilePage, MainPage, SettingsPage, StartPage, get_application_dir, get_log_dir
-from script.core.i18n import install_translation
+from script import (
+    FilePage,
+    MainPage,
+    SettingsPage,
+    StartPage,
+    get_application_dir,
+    get_log_dir,
+    load_config,
+)
+from script.core.i18n import set_application_language
 from script.core.logger import setup_logging
 
 
@@ -90,8 +98,10 @@ def main() -> int:
     app.setOrganizationName(APP_NAME)
 
     setup_logging()
-    # Keep a reference for the whole lifetime of the application.
-    app.translator = install_translation(app)  # type: ignore[attr-defined]
+    set_application_language(
+        app,
+        load_config().get("translations_select", "RU"),
+    )
 
     load_stylesheet(app)
 
