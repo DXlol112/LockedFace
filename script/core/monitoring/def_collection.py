@@ -6,6 +6,19 @@ import shutil
 import cv2
 import numpy as np
 
+from .settings import (
+    DEFAULT_SENSITIVITY,
+    DEFAULT_TIMER_SETTINGS,
+    LEFT_EYE_LANDMARKS,
+    RIGHT_EYE_LANDMARKS,
+    MonitoringTimers,
+    SensitivitySettings,
+    TimerSettings,
+    is_eye_open,
+    is_head_turned_away,
+    run_detection_checks,
+)
+
 # Отключение аппаратного ускорения видео
 os.environ['QT_XCB_GL_INTEGRATION'] = 'none'
 os.environ['QT_DEBUG_PLUGINS'] = '0'
@@ -30,46 +43,26 @@ def get_safe_path(orig_path):
     shutil.copy2(orig_path, temp_path)
     return temp_path
 
-def is_eye_open(landmarks, eye_indices, glass_enabled):
-    p1 = landmarks[eye_indices[0]]
-    p2 = landmarks[eye_indices[1]]
-    dist = np.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2) 
-    if glass_enabled:
-        return dist > 0.008
-    else:
-        return dist > 0.015
-
-def is_head_turned_away(landmarks):
-    p_nose = landmarks[4]
-    p_left = landmarks[234]
-    p_right = landmarks[454]
-    p_top = landmarks[10]
-    p_bot = landmarks[152]
-
-    width = abs(p_right.x - p_left.x)
-    if width == 0: return True
-    ratio_x = abs(p_nose.x - p_left.x) / width
-
-    height = abs(p_bot.y - p_top.y)
-    if height == 0: return True
-    ratio_y = abs(p_nose.y - p_top.y) / height
-    
-    if ratio_x < 0.35 or ratio_x > 0.65 or ratio_y < 0.35 or ratio_y > 0.65:
-        return True
-
-    return False
-
-
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
     finished_signal = pyqtSignal()
 
-    def __init__(self, file, gaze, glasses_enabled, work_time):
+    def __init__(
+        self,
+        file,
+        gaze,
+        glasses_enabled,
+        work_time,
+        sensitivity: SensitivitySettings = DEFAULT_SENSITIVITY,
+        timer_settings: TimerSettings = DEFAULT_TIMER_SETTINGS,
+    ):
         super().__init__()
         self.file = file
         self.gaze = gaze
         self.glasses_enabled = glasses_enabled
         self.work_time = work_time
+        self.sensitivity = sensitivity
+        self.timer_settings = timer_settings
         
         self._run_flag = True
         self.is_paused = False
@@ -82,102 +75,61 @@ class VideoThread(QThread):
         face_mesh = mp_face_mesh.FaceMesh(
             max_num_faces=1, 
             refine_landmarks=True, 
-            min_detection_confidence=0.5, 
-            min_tracking_confidence=0.5
+            min_detection_confidence=self.sensitivity.face_detection_confidence,
+            min_tracking_confidence=self.sensitivity.face_tracking_confidence,
         )
 
         error_player = None
         error_cap = None
         
-        eyes_lost_time = 0.0
-        head_turned_time = 0.0
-        cooldown_until = 0.0
         error_window_active = False
-        
-        pause_start = 0.0
-        start_time = time.time()
-        total_pause_duration = 0
-
-        LEFT_EYE = [386, 374]
-        RIGHT_EYE = [159, 145]
-        was_paused = False
+        timers = MonitoringTimers(session_started_at=time.time())
 
         try:
             while cap.isOpened() and self._run_flag:
                 curr_t = time.time()
 
                 if self.is_paused:
-                    if not was_paused:
-                        pause_start = curr_t
+                    if timers.pause_started_at is None:
+                        timers.begin_pause(curr_t)
                         if error_player: error_player.set_pause(True)
-                        was_paused = True
                     
                     ret, frame = cap.read()
                     if ret:
                         cv2.putText(frame, "PAUSE", (50, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 255), 2)
                         self.change_pixmap_signal.emit(frame)
-                    time.sleep(0.05)
+                    time.sleep(self.timer_settings.pause_frame_delay)
                     continue
                 else:
-                    if was_paused:
-                        total_pause_duration += (curr_t - pause_start)
+                    if timers.pause_started_at is not None:
+                        timers.end_pause(curr_t)
                         if error_player: error_player.set_pause(False)
-                        was_paused = False
 
                 ret, frame = cap.read()
                 if not ret: break
 
-                if (curr_t - start_time - total_pause_duration) >= self.work_time:
+                if timers.is_work_time_finished(curr_t, self.work_time):
                     print("Конец рабочего времени")
                     break
 
                 rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 results = face_mesh.process(rgb_frame)
 
-                face_detected = False
-                eyes_detected = False
-                head_looking_forward = True
+                detection_status, landmarks = run_detection_checks(
+                    results,
+                    self.gaze,
+                    self.glasses_enabled,
+                    self.sensitivity,
+                )
 
-                if results.multi_face_landmarks: # type: ignore
-                    face_detected = True
-                    landmarks = results.multi_face_landmarks[0].landmark # type: ignore
-
-                    for idx in LEFT_EYE + RIGHT_EYE:
+                if landmarks is not None:
+                    for idx in LEFT_EYE_LANDMARKS + RIGHT_EYE_LANDMARKS:
                         pt = landmarks[idx]
                         cv2.circle(frame, (int(pt.x * frame.shape[1]), int(pt.y * frame.shape[0])), 2, (0, 255, 0), -1)
 
-                    if self.gaze:
-                        left_open = is_eye_open(landmarks, LEFT_EYE, self.glasses_enabled)
-                        right_open = is_eye_open(landmarks, RIGHT_EYE, self.glasses_enabled)
-                        eyes_detected = left_open or right_open
-                    else:
-                        eyes_detected = True
-
-                    if is_head_turned_away(landmarks):
-                        head_looking_forward = False
-
-                should_error = False
-                in_cooldown = curr_t < cooldown_until
-
-                if not in_cooldown:
-                    if not face_detected or not eyes_detected:
-                        if eyes_lost_time == 0: 
-                            eyes_lost_time = curr_t
-                        if curr_t - eyes_lost_time >= 1.3:
-                            should_error = True
-                    else:
-                        eyes_lost_time = 0.0
-
-                    if face_detected and not head_looking_forward:
-                        if head_turned_time == 0: 
-                            head_turned_time = curr_t
-                        if curr_t - head_turned_time >= 1.0:
-                            should_error = True
-                    else:
-                        head_turned_time = 0.0
-                else:
-                    eyes_lost_time = 0.0
-                    head_turned_time = 0.0
+                should_error = timers.should_show_alert(
+                    detection_status, curr_t, self.timer_settings
+                )
                     
                 if should_error:
                     if not error_window_active:
@@ -233,7 +185,7 @@ class VideoThread(QThread):
                     try: cv2.destroyWindow("Error")
                     except: pass
                     error_window_active = False
-                    cooldown_until = curr_t + 3
+                    timers.start_cooldown(curr_t, self.timer_settings)
 
                 self.change_pixmap_signal.emit(frame)
                 cv2.waitKey(1)
