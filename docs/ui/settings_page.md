@@ -402,6 +402,8 @@ label сохраните и заполняйте в `retranslate_ui()`.
 ## Связанные страницы
 
 - [Обзор UI-слоя](index.md)
+- [Конфигурация core](../core/config.md)
+- [Локализация](../core/i18n.md)
+- [Версия и обновления](../core/version.md)
 - [Главная страница](main_page.md)
 - [Диалоговое окно](support_ui/win_dialog.md)
-

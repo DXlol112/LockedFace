@@ -379,8 +379,9 @@ inline-стилями в `_setup_video_ui()`.
 ## Связанные страницы
 
 - [Обзор UI-слоя](index.md)
+- [Конфигурация core](../core/config.md)
+- [Рабочий поток `VideoThread`](../core/monitoring/def_collection.md)
 - [Стартовая страница](start_page.md)
 - [Страница настроек](settings_page.md)
 - [Страница файлов](file_page.md)
 - [Диалоговое окно](support_ui/win_dialog.md)
-

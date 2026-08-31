@@ -297,7 +297,8 @@ delete_button.clicked
 ## Связанные страницы
 
 - [Обзор UI-слоя](index.md)
+- [Конфигурация core](../core/config.md)
+- [Пути приложения](../core/path_utils.md)
 - [Главная страница](main_page.md)
 - [Карточка файла](support_ui/file_card_widget.md)
 - [Диалоговое окно](support_ui/win_dialog.md)
-

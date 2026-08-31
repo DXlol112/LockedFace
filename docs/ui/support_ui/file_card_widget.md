@@ -277,6 +277,6 @@ boolean-флаг.
 ## Связанные страницы
 
 - [Обзор UI-слоя](../index.md)
+- [Рабочий поток мониторинга](../../core/monitoring/def_collection.md)
 - [Страница файлов](../file_page.md)
 - [Диалоговое окно](win_dialog.md)
-
