@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Sequence
 
 from packaging.version import Version
 
@@ -9,8 +8,6 @@ from PyQt6.QtCore import QEvent, QSize, Qt, QUrl
 from PyQt6.QtGui import QDesktopServices, QIcon, QPixmap
 from PyQt6.QtWidgets import (
     QApplication,
-    QCheckBox,
-    QComboBox,
     QFrame,
     QGridLayout,
     QHBoxLayout,
@@ -25,69 +22,22 @@ from script.core import (
     __version__,
     get_application_dir,
     get_latest_version,
-    load_config,
-    update_config,
 )
 from script.core.i18n import set_application_language
 from script.style.animations import RotateIconAnimation
 
-from script.UI.support_UI import WinDialog
+from script.UI.support_UI import (
+    WinDialog,
+    add_action,
+    add_advanced_settings,
+    add_input_box,
+    add_mini_dropdown_menu,
+    add_toggle,
+    create_separator,
+)
 
 
 logger = logging.getLogger(__name__)
-
-
-class _MiniDropdown(QComboBox):
-    """A compact combo box with its value painted above the native control."""
-
-    def __init__(self, icon_path: str, icon_size: tuple[int, int]) -> None:
-        super().__init__()
-        self._icon_size = QSize(*icon_size)
-
-        self._icon_label = QLabel(self)
-        self._icon_label.setObjectName("mini_dropdown_icon")
-        self._icon_label.setAttribute(
-            Qt.WidgetAttribute.WA_TransparentForMouseEvents, True
-        )
-        self._icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self._icon_label.setPixmap(QIcon(icon_path).pixmap(self._icon_size))
-
-        self._value_label = QLabel(self)
-        self._value_label.setObjectName("mini_dropdown_value")
-        self._value_label.setAttribute(
-            Qt.WidgetAttribute.WA_TransparentForMouseEvents, True
-        )
-        self._value_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.currentTextChanged.connect(self._show_selected_value)
-
-    def _show_selected_value(self, value: str) -> None:
-        self._value_label.setText(value)
-        self._raise_overlays()
-
-    def _raise_overlays(self) -> None:
-        self._icon_label.raise_()
-        self._value_label.raise_()
-
-    def resizeEvent(self, event) -> None:  # type: ignore[no-untyped-def] # noqa: N802
-        super().resizeEvent(event)
-        icon_width = self._icon_size.width()
-        icon_height = self._icon_size.height()
-        self._icon_label.setGeometry(
-            self.width() - icon_width,
-            (self.height() - icon_height) // 2,
-            icon_width,
-            icon_height,
-        )
-        self._value_label.setGeometry(0, 0, self.width() - icon_width, self.height())
-        self._raise_overlays()
-
-    def showPopup(self) -> None:  # noqa: N802
-        super().showPopup()
-        popup = self.view().window()
-        popup.setFixedWidth(self.width())
-        self.view().setFixedWidth(self.width())
-        popup.raise_()
-        self._raise_overlays()
 
 
 class SettingsPage(QWidget):
@@ -160,32 +110,32 @@ class SettingsPage(QWidget):
         actions_layout = QVBoxLayout()
         actions_layout.setSpacing(10)
         actions_layout.setContentsMargins(10, 0, 0, 0)
-        self.update_label = self._add_action(
+        self.update_label = add_action(
             actions_layout,
             "static/btn_icon/refresh_btn.png",
             (51, 49),
             self.update_checker,
         )
-        self.open_folder_label = self._add_action(
+        self.open_folder_label = add_action(
             actions_layout,
             "static/btn_icon/link_btn.png",
             (56, 46),
             self.open_folder,
         )
-        self.source_code_label = self._add_action(
+        self.source_code_label = add_action(
             actions_layout,
             "static/btn_icon/link_btn.png",
             (56, 46),
             self.open_github,
         )
 
-        line = self._create_separator()
+        line = create_separator()
 
         toggle_layout = QVBoxLayout()
         toggle_layout.setContentsMargins(10, 0, 5, 0)
         toggle_layout.setSpacing(10)
         self.translations_label, self.translations_select = (
-            self._add_mini_dropdown_menu(
+            add_mini_dropdown_menu(
                 toggle_layout,
                 values=("RU", "EN"),
                 icon_path="static/btn_icon/angle-small-down.png",
@@ -195,11 +145,11 @@ class SettingsPage(QWidget):
         )
         self.translations_select.currentTextChanged.connect(self._change_language)
 
-        self.gaze_label, self.gaze_toggle = self._add_toggle(
+        self.gaze_label, self.gaze_toggle = add_toggle(
             toggle_layout, "gaze_enabled"
         )
         toggle_layout.addSpacing(12)
-        self.glasses_label, self.glasses_toggle = self._add_toggle(
+        self.glasses_label, self.glasses_toggle = add_toggle(
             toggle_layout, "glasses_enabled"
         )
 
@@ -217,7 +167,7 @@ class SettingsPage(QWidget):
             self.advanced_settings_button,
             self.advanced_content,
             self.advanced_placeholder_label,
-        ) = self._add_advanced_settings(
+        ) = add_advanced_settings(
             content_layout,
             "static/btn_icon/angle-small-down.png",
             (40, 40),
@@ -235,153 +185,10 @@ class SettingsPage(QWidget):
 
         self.retranslate_ui()
 
-    def _add_action(
-        self,
-        layout: QVBoxLayout,
-        icon_path: str,
-        icon_size: tuple[int, int],
-        callback,
-    ) -> QLabel:  # type: ignore[no-untyped-def]
-        row = QHBoxLayout()
-        label = QLabel()
-        label.setObjectName("text_settings")
-        button = QPushButton()
-        button.setObjectName("settings_btn")
-        button.setIcon(QIcon(icon_path))
-        button.setIconSize(QSize(*icon_size))
-        button.clicked.connect(callback)
-        row.addWidget(label)
-        row.addStretch()
-        row.addWidget(button)
-        layout.addLayout(row)
-        return label
-
-    def _add_toggle(
-        self, layout: QVBoxLayout, config_key: str
-    ) -> tuple[QLabel, QCheckBox]:
-        row = QHBoxLayout()
-        label = QLabel()
-        label.setObjectName("text_settings")
-        toggle = QCheckBox()
-        toggle.setObjectName("toggle_btn")
-        toggle.setChecked(bool(load_config().get(config_key, False)))
-        toggle.toggled.connect(lambda checked: update_config(**{config_key: checked}))
-        row.addWidget(label)
-        row.addStretch()
-        row.addWidget(toggle)
-        layout.addLayout(row)
-        return label, toggle
-
-    def _add_advanced_settings(
-        self,
-        layout: QVBoxLayout,
-        icon_path: str,
-        icon_size: tuple[int, int],
-        callback,
-    ) -> tuple[QLabel, QPushButton, QFrame, QLabel]:  # type: ignore[no-untyped-def]
-        """Add an expandable settings card and its content as one widget."""
-        card = QFrame()
-        card.setObjectName("advanced_settings_card")
-        card_layout = QVBoxLayout(card)
-        card_layout.setContentsMargins(0, 0, 0, 0)
-        card_layout.setSpacing(10)
-
-        header_layout = QHBoxLayout()
-        header_layout.setContentsMargins(10, 0, 5, 0)
-        header_layout.setSpacing(10)
-
-        label = QLabel()
-        label.setObjectName("advanced_settings_label")
-        button = QPushButton()
-        button.setObjectName("advanced_settings_button")
-        button.setIcon(QIcon(icon_path))
-        button.setIconSize(QSize(*icon_size))
-        button.setFixedSize(48, 48)
-        button.clicked.connect(callback)
-
-        header_layout.addWidget(label)
-        header_layout.addStretch()
-        header_layout.addWidget(button)
-        card_layout.addLayout(header_layout)
-
-        content = QFrame()
-        content.setObjectName("advanced_settings_content")
-        content_layout = QVBoxLayout(content)
-        content_layout.setContentsMargins(15, 0, 5, 0)
-        content_layout.setSpacing(10)
-
-        content_label = QLabel()
-        content_label.setObjectName("advanced_settings_placeholder")
-        content_label.setWordWrap(True)
-        content_layout.addWidget(content_label)
-        card_layout.addWidget(content)
-
-        layout.addWidget(card)
-        return label, button, content, content_label
-
-    def _add_mini_dropdown_menu(
-        self,
-        layout: QVBoxLayout,
-        values: Sequence[str],
-        icon_path: str,
-        icon_size: tuple[int, int],
-        config_key: str,
-    ) -> tuple[QLabel, QComboBox]:
-        """Add a compact dropdown and persist its value under ``config_key``."""
-        items = tuple(values)
-        if not items:
-            raise ValueError("Dropdown values cannot be empty")
-
-        icon_width, icon_height = icon_size
-        if icon_width <= 0 or icon_height <= 0:
-            raise ValueError("Dropdown icon size must be positive")
-
-        row = QHBoxLayout()
-        label = QLabel()
-        label.setObjectName("text_settings")
-
-        dropdown = _MiniDropdown(icon_path, icon_size)
-        dropdown.setObjectName("mini_dropdown")
-        dropdown.addItems(items)
-        dropdown.setFixedSize(50, 26)
-        dropdown.view().setObjectName("mini_dropdown_list")
-        dropdown.view().setFixedWidth(50)
-
-        saved_value = str(load_config().get(config_key, items[0]))
-        dropdown.setCurrentText(saved_value if saved_value in items else items[0])
-        dropdown._show_selected_value(dropdown.currentText())
-        dropdown.currentTextChanged.connect(
-            lambda value: self._save_dropdown_selection(config_key, value, items)
-        )
-
-        row.addWidget(label)
-        row.addStretch()
-        row.addWidget(dropdown)
-        layout.addLayout(row)
-        return label, dropdown
-
-    def _save_dropdown_selection(
-        self,
-        config_key: str,
-        value: str,
-        allowed_values: Sequence[str],
-    ) -> None:
-        """Persist a value emitted by a configured mini dropdown."""
-        if value in allowed_values:
-            update_config(**{config_key: value})
-
     def _change_language(self, language: str) -> None:
         app = QApplication.instance()
         if app is not None:
-            set_application_language(app, language)
-
-    def _create_separator(self) -> QFrame:
-        line = QFrame()
-        line.setFrameShape(QFrame.Shape.HLine)
-        line.setFrameShadow(QFrame.Shadow.Sunken)
-        line.setObjectName("line_sep")
-        line.setFixedHeight(1)
-        return line
+            set_application_language(app, language) # pyright: ignore[reportArgumentType]
 
     def update_checker(self) -> None:
         try:
