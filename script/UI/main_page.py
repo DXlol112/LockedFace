@@ -170,7 +170,7 @@ class MainPage(QWidget):
         video_layout.addLayout(button_layout)
 
     def _load_time_from_config(self) -> None:
-        seconds = load_config().get("work_time_seconds", 0)
+        seconds = load_config()["user_settings"].get("work_time_seconds", 0)
         try:
             seconds = max(0, int(seconds))
         except (TypeError, ValueError):
@@ -180,14 +180,16 @@ class MainPage(QWidget):
         self.m, self.s = divmod(remainder, 60)
 
     def _save_time_to_config(self) -> None:
-        update_config(work_time_seconds=self._total_seconds())
+        update_config("user_settings", work_time_seconds=self._total_seconds())
 
     def _get_monitor_settings(self) -> tuple[str, bool, bool]:
         config = load_config()
+        user_settings = config["user_settings"]
+        monitoring_settings = config["monitoring_settings"]
         return (
-            str(config.get("selected_file") or ""),
-            bool(config.get("gaze_enabled", False)),
-            bool(config.get("glasses_enabled", False)),
+            str(user_settings.get("selected_file") or ""),
+            bool(monitoring_settings.get("gaze_enabled", False)),
+            bool(monitoring_settings.get("glasses_enabled", False)),
         )
 
     def _create_arrow(self, text: str, callback) -> QPushButton:  # type: ignore[no-untyped-def]

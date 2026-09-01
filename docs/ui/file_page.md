@@ -232,7 +232,7 @@ add_file_button.clicked
     → copy2(source, managed_destination)
     → refresh_gallery()
     → select_file(destination)
-    → update_config(selected_file=...)
+    → update_config("user_settings", selected_file=...)
 
 FileCard.mousePressEvent
     → on_click(card.path)

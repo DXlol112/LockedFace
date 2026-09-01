@@ -81,7 +81,7 @@ class FilePage(QWidget):
         self.refresh_gallery()
 
     def _load_selection(self) -> str | None:
-        selected_file = load_config().get("selected_file")
+        selected_file = load_config()["user_settings"].get("selected_file")
         if not selected_file:
             return None
 
@@ -158,7 +158,7 @@ class FilePage(QWidget):
         self.selected_path = str(selected)
         for card in self.cards:
             card.set_selected(card.path == self.selected_path)
-        update_config(selected_file=self.selected_path)
+        update_config("user_settings", selected_file=self.selected_path)
 
     def delete_file(self) -> None:
         if self.selected_path is None:
@@ -198,7 +198,7 @@ class FilePage(QWidget):
             return
 
         self.selected_path = None
-        update_config(selected_file=None)
+        update_config("user_settings", selected_file=None)
         self.reset_delete_button()
         self.refresh_gallery()
 

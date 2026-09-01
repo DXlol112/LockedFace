@@ -98,6 +98,7 @@ def add_action(
 def add_input_box(
     layout: QVBoxLayout,
     value_range: tuple[float, float],
+    config_section: str,
     config_key: str,
 ) -> tuple[QLabel, QDoubleSpinBox]:
     """Add a numeric input and persist changes under ``config_key``."""
@@ -111,9 +112,9 @@ def add_input_box(
     input_box.setDecimals(2)
     input_box.setSingleStep(0.01)
     input_box.setObjectName("input_box")
-    input_box.setValue(float(load_config().get(config_key, 4)))
+    input_box.setValue(float(load_config()[config_section].get(config_key, 4)))
     input_box.valueChanged.connect(
-        lambda number: update_config(**{config_key: number})
+        lambda number: update_config(config_section, **{config_key: number})
     )
 
     row.addWidget(label)
@@ -125,7 +126,7 @@ def add_input_box(
 
 
 def add_toggle(
-    layout: QVBoxLayout, config_key: str
+    layout: QVBoxLayout, config_section: str, config_key: str
 ) -> tuple[QLabel, QCheckBox]:
     """Add a checkbox and persist its checked state."""
     row = QHBoxLayout()
@@ -133,8 +134,10 @@ def add_toggle(
     label.setObjectName("text_settings")
     toggle = QCheckBox()
     toggle.setObjectName("toggle_btn")
-    toggle.setChecked(bool(load_config().get(config_key, False)))
-    toggle.toggled.connect(lambda checked: update_config(**{config_key: checked}))
+    toggle.setChecked(bool(load_config()[config_section].get(config_key, False)))
+    toggle.toggled.connect(
+        lambda checked: update_config(config_section, **{config_key: checked})
+    )
     row.addWidget(label)
     row.addStretch()
     row.addWidget(toggle)
@@ -194,6 +197,7 @@ def add_mini_dropdown_menu(
     values: Sequence[str],
     icon_path: str,
     icon_size: tuple[int, int],
+    config_section: str,
     config_key: str,
 ) -> tuple[QLabel, QComboBox]:
     """Add a compact dropdown and persist its value under ``config_key``."""
@@ -216,11 +220,13 @@ def add_mini_dropdown_menu(
     dropdown.view().setObjectName("mini_dropdown_list") # type: ignore
     dropdown.view().setFixedWidth(50) # type: ignore
 
-    saved_value = str(load_config().get(config_key, items[0]))
+    saved_value = str(load_config()[config_section].get(config_key, items[0]))
     dropdown.setCurrentText(saved_value if saved_value in items else items[0])
     dropdown._show_selected_value(dropdown.currentText())
     dropdown.currentTextChanged.connect(
-        lambda value: _save_dropdown_selection(config_key, value, items)
+        lambda value: _save_dropdown_selection(
+            config_section, config_key, value, items
+        )
     )
 
     row.addWidget(label)
@@ -231,13 +237,14 @@ def add_mini_dropdown_menu(
 
 
 def _save_dropdown_selection(
+    config_section: str,
     config_key: str,
     value: str,
     allowed_values: Sequence[str],
 ) -> None:
     """Persist a value emitted by a configured mini dropdown."""
     if value in allowed_values:
-        update_config(**{config_key: value})
+        update_config(config_section, **{config_key: value})
 
 
 def create_separator() -> QFrame:

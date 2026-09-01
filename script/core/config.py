@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+from copy import deepcopy
 from typing import Any
 
 from script.core.path_utils import get_config_path
@@ -12,17 +13,21 @@ from script.core.path_utils import get_config_path
 logger = logging.getLogger(__name__)
 
 DEFAULT_CONFIG: dict[str, Any] = {
-    "selected_file": None,
-    "gaze_enabled": False,
-    "glasses_enabled": False,
-    "work_time_seconds": 0,
-    "translations_select": "RU",
+    "user_settings": {
+        "selected_file": None,
+        "work_time_seconds": 0,
+        "translations_select": "RU",
+    },
+    "monitoring_settings": {
+        "gaze_enabled": False,
+        "glasses_enabled": False,
+    },
 }
 
 
 def load_config() -> dict[str, Any]:
     """Return a complete configuration, falling back safely on malformed data."""
-    config = DEFAULT_CONFIG.copy()
+    config = deepcopy(DEFAULT_CONFIG)
     config_path = get_config_path()
 
     if not config_path.exists():
@@ -35,10 +40,22 @@ def load_config() -> dict[str, Any]:
         logger.warning("Could not read configuration %s: %s", config_path, error)
         return config
 
-    if isinstance(saved_config, dict):
-        config.update(saved_config)
-    else:
+    if not isinstance(saved_config, dict):
         logger.warning("Configuration %s does not contain a JSON object", config_path)
+        return config
+
+    for section, values in saved_config.items():
+        if section in DEFAULT_CONFIG:
+            if isinstance(values, dict):
+                config[section].update(values)
+            else:
+                logger.warning(
+                    "Configuration section %s in %s is not a JSON object",
+                    section,
+                    config_path,
+                )
+        else:
+            config[section] = values
 
     return config
 
@@ -49,9 +66,13 @@ def save_config(config: dict[str, Any]) -> None:
         json.dump(config, file, indent=4, ensure_ascii=False)
 
 
-def update_config(**values: Any) -> dict[str, Any]:
-    """Merge values into the saved configuration and return the result."""
+def update_config(section: str, **values: Any) -> dict[str, Any]:
+    """Merge values into one configuration section and return the result."""
     config = load_config()
-    config.update(values)
+    section_config = config.get(section)
+    if not isinstance(section_config, dict):
+        section_config = {}
+        config[section] = section_config
+    section_config.update(values)
     save_config(config)
     return config

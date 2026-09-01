@@ -140,17 +140,18 @@ class SettingsPage(QWidget):
                 values=("RU", "EN"),
                 icon_path="static/btn_icon/angle-small-down.png",
                 icon_size=(20, 20),
+                config_section="user_settings",
                 config_key="translations_select",
             )
         )
         self.translations_select.currentTextChanged.connect(self._change_language)
 
         self.gaze_label, self.gaze_toggle = add_toggle(
-            toggle_layout, "gaze_enabled"
+            toggle_layout, "monitoring_settings", "gaze_enabled"
         )
         toggle_layout.addSpacing(12)
         self.glasses_label, self.glasses_toggle = add_toggle(
-            toggle_layout, "glasses_enabled"
+            toggle_layout, "monitoring_settings", "glasses_enabled"
         )
 
         content_layout.addLayout(info_block)

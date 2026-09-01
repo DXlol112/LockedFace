@@ -181,13 +181,14 @@ camelCase; переименовывать его в snake_case нельзя.
 **Побочные эффекты:** создаёт виджеты, подключает `button.clicked` и изменяет
 переданный layout.
 
-### `_add_toggle(layout: QVBoxLayout, config_key: str) -> tuple[QLabel, QCheckBox]`
+### `_add_toggle(layout: QVBoxLayout, config_section: str, config_key: str) -> tuple[QLabel, QCheckBox]`
 
 Добавляет строку настройки с подписью и checkbox.
 
 **Параметры:**
 
 - `layout` — контейнер строки;
+- `config_section` — секция конфигурации;
 - `config_key` — ключ, который читается и обновляется в конфигурации.
 
 **Возвращаемое значение:** кортеж `(label, toggle)`.
@@ -196,7 +197,7 @@ camelCase; переименовывать его в snake_case нельзя.
 `load_config()` и преобразуется в `bool`.
 
 **Побочные эффекты:** подключает `toggled` к lambda, вызывающей
-`update_config(**{config_key: checked})`.
+`update_config(config_section, **{config_key: checked})`.
 
 **Важные условия:** ключ не проверяется по списку допустимых настроек. Опечатка
 создаст новый ключ в JSON.
@@ -213,7 +214,7 @@ camelCase; переименовывать его в snake_case нельзя.
 **Побочные эффекты:** добавляет карточку в переданный layout и подключает
 кнопку.
 
-### `_add_mini_dropdown_menu(layout, values, icon_path, icon_size, config_key) -> tuple[QLabel, QComboBox]`
+### `_add_mini_dropdown_menu(layout, values, icon_path, icon_size, config_section, config_key) -> tuple[QLabel, QComboBox]`
 
 Создаёт строку с подписью и `_MiniDropdown`, заполняет варианты и выбирает
 сохранённое значение.
@@ -223,6 +224,7 @@ camelCase; переименовывать его в snake_case нельзя.
 - `layout` — вертикальный layout;
 - `values` — непустая последовательность допустимых строк;
 - `icon_path`, `icon_size` — ресурс и размер стрелки;
+- `config_section` — секция конфигурации;
 - `config_key` — ключ конфигурации.
 
 **Возвращаемое значение:** `(label, dropdown)`.
@@ -236,7 +238,7 @@ camelCase; переименовывать его в snake_case нельзя.
 **Ошибки:** вызывает `ValueError`, если `values` пуст или один из размеров
 иконки неположителен.
 
-### `_save_dropdown_selection(config_key: str, value: str, allowed_values: Sequence[str]) -> None`
+### `_save_dropdown_selection(config_section: str, config_key: str, value: str, allowed_values: Sequence[str]) -> None`
 
 Сохраняет выбранное значение, только если оно присутствует в
 `allowed_values`.
@@ -328,10 +330,10 @@ dropdown и флага раскрытия.
 
 ```text
 gaze_toggle.toggled(bool)
-    → update_config(gaze_enabled=bool)
+    → update_config("monitoring_settings", gaze_enabled=bool)
 
 glasses_toggle.toggled(bool)
-    → update_config(glasses_enabled=bool)
+    → update_config("monitoring_settings", glasses_enabled=bool)
 
 translations_select.currentTextChanged(code)
     ├── _save_dropdown_selection(...)
@@ -349,7 +351,7 @@ translations_select.currentTextChanged(code)
 ### Добавить boolean-настройку
 
 1. Добавьте значение по умолчанию в конфигурацию.
-2. В конструкторе вызовите `_add_toggle(layout, "new_key")`.
+2. В конструкторе вызовите `_add_toggle(layout, "section_name", "new_key")`.
 3. Сохраните возвращённые label и checkbox в атрибутах.
 4. Установите переводимый текст label в `retranslate_ui()`.
 5. Прочитайте новый ключ там, где он влияет на поведение приложения.

@@ -98,9 +98,10 @@ def main() -> int:
     app.setOrganizationName(APP_NAME)
 
     setup_logging()
+    user_settings = load_config()["user_settings"]
     set_application_language(
         app,
-        load_config().get("translations_select", "RU"),
+        user_settings.get("translations_select", "RU"),
     )
 
     load_stylesheet(app)
