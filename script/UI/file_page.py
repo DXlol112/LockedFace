@@ -172,9 +172,7 @@ class FilePage(QWidget):
             )
             for card in self.cards:
                 if card.path == self.selected_path:
-                    card.setStyleSheet(
-                        "QFrame#file_card { border: 3px solid red; border-radius: 10px; }"
-                    )
+                    card.set_delete_pending(True)
             return
 
         path_to_remove = Path(self.selected_path)
@@ -206,6 +204,8 @@ class FilePage(QWidget):
         self.confirm_delete = False
         self.delete_button.setText(self.tr("Удалить выбранный файл"))
         self.delete_button.setStyleSheet("")
+        for card in self.cards:
+            card.set_delete_pending(False)
 
     def retranslate_ui(self) -> None:
         self.add_file_button.setText(self.tr("Добавить файл"))

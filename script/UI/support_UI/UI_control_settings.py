@@ -15,6 +15,7 @@ from PyQt6.QtWidgets import (
     QLabel,
     QMenu,
     QPushButton,
+    QToolTip,
     QVBoxLayout,
     QWidget,
 )
@@ -73,6 +74,25 @@ class _MiniDropdown(QComboBox):
         self.view().setFixedWidth(self.width()) # pyright: ignore[reportOptionalMemberAccess]
         popup.raise_() # type: ignore
         self._raise_overlays()
+
+def object_hover_text(QT_object):
+    """Create a widget class that shows ``hover_text`` beneath it on hover."""
+
+    class ObjectHover(QT_object):
+        def __init__(self, hover_text, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.hover_text = hover_text
+
+        def enterEvent(self, event):
+            bottom_left = self.mapToGlobal(QPoint(0, self.height()))
+            QToolTip.showText(bottom_left, self.hover_text, self)
+            super().enterEvent(event)
+
+        def leaveEvent(self, event):
+            QToolTip.hideText()
+            super().leaveEvent(event)
+
+    return ObjectHover
 
 
 class _BurgerMenu(QMenu):

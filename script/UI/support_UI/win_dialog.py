@@ -161,7 +161,7 @@ class WinDialog(QWidget):
         )
 
     def _load_stylesheet(self) -> None:
-        style_path = Path("script/style/dialog_win.qss")
+        style_path = Path("script/style/QSS_support_UI/win_dialog.qss")
         try:
             self.setStyleSheet(style_path.read_text(encoding="utf-8"))
         except OSError as error:

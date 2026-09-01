@@ -76,15 +76,17 @@ class MainWindow(QMainWindow):
 
 def load_stylesheet(app: QApplication) -> None:
     stylesheet_dir = Path("script/style")
-    stylesheet_files = (
-        "start_page.qss",
-        "main_page.qss",
-        "settings_page.qss",
-        "file_page.qss",
+    stylesheet_paths = (
+        stylesheet_dir / "start_page.qss",
+        stylesheet_dir / "main_page.qss",
+        stylesheet_dir / "settings_page.qss",
+        stylesheet_dir / "file_page.qss",
+        stylesheet_dir / "QSS_support_UI" / "UI_control_settings.qss",
+        stylesheet_dir / "QSS_support_UI" / "file_card_widget.qss",
     )
     stylesheet = "\n".join(
-        (stylesheet_dir / filename).read_text(encoding="utf-8")
-        for filename in stylesheet_files
+        stylesheet_path.read_text(encoding="utf-8")
+        for stylesheet_path in stylesheet_paths
     )
     app.setStyleSheet(stylesheet)
 

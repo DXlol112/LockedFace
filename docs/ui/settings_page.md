@@ -382,7 +382,9 @@ label сохраните и заполняйте в `retranslate_ui()`.
 
 ## Связь со стилями
 
-Страница использует `script/style/settings_page.qss`. Основные имена объектов:
+Страница использует `script/style/settings_page.qss`, а элементы из
+`UI_control_settings.py` — `script/style/QSS_support_UI/UI_control_settings.qss`.
+Основные имена объектов:
 `header_sett`, `back_btn`, `settings_scroll`, `settings_content`,
 `text_settings`, `settings_btn`, `toggle_btn`, `mini_dropdown`,
 `mini_dropdown_list`, `advanced_settings_card` и связанные имена расширенного

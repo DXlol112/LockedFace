@@ -46,8 +46,8 @@ class FileCard(QFrame):
         self.stop_timer.timeout.connect(self.stop_media)
 
         self.name_label = QLabel(Path(path).name)
+        self.name_label.setObjectName("file_card_name")
         self.name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.name_label.setStyleSheet("border: none;")
         layout.addWidget(self.stack)
         layout.addWidget(self.name_label)
 
@@ -132,8 +132,19 @@ class FileCard(QFrame):
             self.on_click(self.path)
 
     def set_selected(self, is_selected: bool) -> None:
-        border = "3px solid green" if is_selected else "1px solid gray"
-        self.setStyleSheet(f"QFrame#file_card {{ border: {border}; border-radius: 10px; }}")
+        self.setProperty("selected", is_selected)
+        self._refresh_style()
+
+    def set_delete_pending(self, is_pending: bool) -> None:
+        self.setProperty("deletePending", is_pending)
+        self._refresh_style()
+
+    def _refresh_style(self) -> None:
+        style = self.style()
+        if style is not None:
+            style.unpolish(self)
+            style.polish(self)
+        self.update()
 
     def cleanup_resources(self) -> None:
         try:

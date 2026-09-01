@@ -24,7 +24,7 @@
   отрисовку кнопки без стандартного однострочного текста;
 - `QDesktopServices` и `QUrl` открывают внешнюю ссылку;
 - `QSizePolicy` и метрики шрифта участвуют в расчёте размеров;
-- `Path` загружает `script/style/dialog_win.qss`;
+- `Path` загружает `script/style/QSS_support_UI/win_dialog.qss`;
 - стандартный `logging` сообщает о проблеме чтения стиля.
 
 ## Класс `WrappingPushButton`
@@ -169,7 +169,7 @@
 
 ### `_load_stylesheet() -> None`
 
-Читает `script/style/dialog_win.qss` в UTF-8 и применяет содержимое ко всему
+Читает `script/style/QSS_support_UI/win_dialog.qss` в UTF-8 и применяет содержимое ко всему
 overlay.
 
 **Побочные эффекты:** выполняет чтение файла и вызывает `setStyleSheet()`.
@@ -250,7 +250,7 @@ open_button.clicked
 
 ## Связь со стилями
 
-Диалог самостоятельно загружает `script/style/dialog_win.qss`. Основные
+Диалог самостоятельно загружает `script/style/QSS_support_UI/win_dialog.qss`. Основные
 `objectName`: `overlay`, `modalDialog`, `titleLabel`, `closeButton`,
 `messageLabel` и `openButton`. `WrappingPushButton` рисует фон через активный
 Qt-стиль, поэтому остаётся совместимым с QSS кнопки.

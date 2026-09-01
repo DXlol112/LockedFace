@@ -7,6 +7,7 @@ from script.UI.support_UI.UI_control_settings import (
     add_mini_dropdown_menu,
     add_toggle,
     create_separator,
+    object_hover_text,
 )
 from script.UI.support_UI.win_dialog import WinDialog
 
@@ -21,4 +22,5 @@ __all__ = [
     "add_mini_dropdown_menu",
     "add_toggle",
     "create_separator",
+    "object_hover_text",
 ]

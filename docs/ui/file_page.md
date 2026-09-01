@@ -280,8 +280,9 @@ delete_button.clicked
 
 Страница оформляется через `script/style/file_page.qss` и общие селекторы.
 Основные `objectName`: `header_sett`, `back_btn`, `file_scroll`, `add_file_btn`
-и `add_del_btn`. Красное подтверждение удаления устанавливается inline в
-`delete_file()`.
+и `add_del_btn`. Стили карточек находятся в
+`script/style/QSS_support_UI/file_card_widget.qss`, а подтверждение удаления
+переключается методом `FileCard.set_delete_pending()`.
 
 ## Текущие ограничения
 

@@ -69,13 +69,17 @@
 │   │   ├── animations/
 │   │   │   └── settings_page/
 │   │   │       └── rotete_icon.py
-│   │   ├── dialog_win.qss
+│   │   ├── QSS_support_UI/
+│   │   │   ├── UI_control_settings.qss
+│   │   │   ├── file_card_widget.qss
+│   │   │   └── win_dialog.qss
 │   │   ├── file_page.qss
 │   │   ├── main_page.qss
 │   │   ├── settings_page.qss
 │   │   └── start_page.qss
 │   └── UI/                            # Страницы и компоненты интерфейса
 │       ├── support_UI/                # Вспомогательные виджеты и диалоги
+│       │   ├── UI_control_settings.py
 │       │   ├── file_card_widget.py
 │       │   └── win_dialog.py
 │       ├── file_page.py

@@ -4,11 +4,6 @@
     border: none;
 }
 
-#file_card {
-    background-color: #2b2b2b;
-    color: white;
-}
-
 #add_file_btn {
     background-color: white;
     color: black;

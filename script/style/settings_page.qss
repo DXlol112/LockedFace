@@ -15,35 +15,6 @@
 #back_btn:pressed {
     background-color: #3A3A3A;
 }
-#burger_menu_button {
-    background-color: transparent;
-    border: none;
-}
-#burger_menu_button:hover {
-    background-color: #2A2A2A;
-    border-radius: 4px;
-}
-#burger_menu_button:pressed,
-#burger_menu_button:open {
-    background-color: #3A3A3A;
-}
-#burger_menu_button::menu-indicator {
-    image: none;
-    width: 0px;
-}
-#burger_menu {
-    color: #EDE9E9;
-    background-color: #252323;
-    border: 1px solid #3A3A3A;
-    padding: 4px;
-}
-#burger_menu::item {
-    padding: 8px 16px;
-    border-radius: 4px;
-}
-#burger_menu::item:selected {
-    background-color: #3A3A3A;
-}
 #name_set {
     color: #FFFFFF;
     font-weight: 900;
@@ -54,23 +25,6 @@
     font-size: 18px;
     font-weight: 400;
 }
-#text_settings {
-    color: #EDE9E9;
-    font-size: 20px;
-}
-#settings_btn {
-    border: none;
-    background-color: transparent;
-}
-#settings_btn:hover {
-    background-color: #2a2a2a;
-    border-radius: 3px;
-}
-#line_sep{
-    border: none;
-    background-color: #818181;
-}
-
 #settings_scroll {
     background-color: #323232;
     border: none;
@@ -78,42 +32,6 @@
 
 #settings_content {
     background-color: #323232;
-}
-
-#advanced_settings_card {
-    background-color: transparent;
-    border: none;
-}
-
-#advanced_settings_label {
-    color: #EDE9E9;
-    font-size: 20px;
-    border: none;
-}
-
-#advanced_settings_button {
-    background-color: transparent;
-    border: none;
-}
-
-#advanced_settings_button:hover {
-    background-color: #3A3A3A;
-    border-radius: 8px;
-}
-
-#advanced_settings_button:pressed {
-    background-color: #171717;
-}
-
-#advanced_settings_content {
-    background-color: transparent;
-    border: none;
-}
-
-#advanced_settings_placeholder {
-    color: #EDE9E9;
-    font-size: 16px;
-    border: none;
 }
 
 QScrollBar:vertical {
@@ -130,83 +48,4 @@ QScrollBar::handle:vertical {
 
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
     height: 0px;
-}
-
-#toggle_btn {
-    spacing: 0px;
-    background: transparent;
-}
-
-#toggle_btn::indicator {
-    width: 50px;
-    height: 26px;
-    border-radius: 13px;
-}
-
-#toggle_btn::indicator:unchecked {
-    background-color: #6E6F72;
-}
-
-#toggle_btn::indicator:checked {
-    background-color: #D9D9D9;
-}
-
-#toggle_btn:focus {
-    border: none;
-    outline: none;
-}
-
-#mini_dropdown {
-    min-height: 26px;
-    max-height: 26px;
-    padding: 0px;
-    color: transparent;
-    background-color: #6E6F72;
-    border: none;
-    border-radius: 6px;
-    font-size: 13px;
-}
-
-#mini_dropdown:hover,
-#mini_dropdown:on {
-    background-color: #818181;
-}
-
-#mini_dropdown::drop-down {
-    subcontrol-origin: padding;
-    subcontrol-position: top right;
-    width: 0px;
-    border: none;
-}
-
-#mini_dropdown::down-arrow {
-    image: none;
-    width: 0px;
-    height: 0px;
-}
-
-#mini_dropdown_value {
-    padding: 0px;
-    color: #EDE9E9;
-    background-color: transparent;
-    border: none;
-    font-size: 13px;
-}
-
-#mini_dropdown_icon {
-    padding: 0px;
-    background-color: transparent;
-    border: none;
-}
-
-#mini_dropdown_list {
-    min-width: 48px;
-    max-width: 48px;
-    color: #EDE9E9;
-    background-color: #6E6F72;
-    border: 1px solid #818181;
-    outline: none;
-    font-size: 13px;
-    selection-color: #FFFFFF;
-    selection-background-color: #3A3A3A;
 }
