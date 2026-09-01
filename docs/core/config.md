@@ -34,6 +34,16 @@ UI → load_config/update_config → get_config_path → data_dir/config.json
 | `user_settings` | `translations_select` | `"RU"` | Текущий язык интерфейса |
 | `monitoring_settings` | `gaze_enabled` | `False` | Включение проверки глаз |
 | `monitoring_settings` | `glasses_enabled` | `False` | Использование порога для очков |
+| `monitoring_settings` | `eyes_lost_delay` | `1.3` | Задержка предупреждения об отсутствии лица или глаз, с |
+| `monitoring_settings` | `head_turned_delay` | `1.0` | Задержка предупреждения о положении головы, с |
+| `monitoring_settings` | `alert_cooldown` | `3.0` | Пауза перед повторным предупреждением, с |
+| `monitoring_settings` | `pause_frame_delay` | `0.05` | Задержка обработки кадров во время паузы, с |
+| `monitoring_settings` | `eye_open_threshold` | `0.015` | Порог открытого глаза без очков |
+| `monitoring_settings` | `eye_open_with_glasses_threshold` | `0.008` | Порог открытого глаза в очках |
+| `monitoring_settings` | `head_position_min_ratio` | `0.35` | Нижняя граница допустимого положения головы |
+| `monitoring_settings` | `head_position_max_ratio` | `0.65` | Верхняя граница допустимого положения головы |
+| `monitoring_settings` | `face_detection_confidence` | `0.5` | Минимальная уверенность обнаружения лица |
+| `monitoring_settings` | `face_tracking_confidence` | `0.5` | Минимальная уверенность отслеживания лица |
 
 Каждый вызов `load_config()` начинает с глубокой копии этого словаря.
 

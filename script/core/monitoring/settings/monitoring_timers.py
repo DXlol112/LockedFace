@@ -1,6 +1,11 @@
 """Timer state and timer-related operations for face monitoring."""
 
+from __future__ import annotations
+
+from collections.abc import Mapping
 from dataclasses import dataclass
+from math import isfinite
+from typing import Any
 
 from .monitoring_checks import DetectionStatus
 
@@ -13,6 +18,33 @@ class TimerSettings:
     head_turned_delay: float = 1.0
     alert_cooldown: float = 3.0
     pause_frame_delay: float = 0.05
+
+    @classmethod
+    def from_mapping(cls, values: Mapping[str, Any]) -> TimerSettings:
+        """Create validated timer settings from a config section."""
+        defaults = cls()
+
+        def get_delay(name: str, default: float) -> float:
+            try:
+                value = float(values.get(name, default))
+            except (TypeError, ValueError):
+                return default
+            return value if isfinite(value) and value >= 0.0 else default
+
+        return cls(
+            eyes_lost_delay=get_delay(
+                "eyes_lost_delay", defaults.eyes_lost_delay
+            ),
+            head_turned_delay=get_delay(
+                "head_turned_delay", defaults.head_turned_delay
+            ),
+            alert_cooldown=get_delay(
+                "alert_cooldown", defaults.alert_cooldown
+            ),
+            pause_frame_delay=get_delay(
+                "pause_frame_delay", defaults.pause_frame_delay
+            ),
+        )
 
 
 DEFAULT_TIMER_SETTINGS = TimerSettings()

@@ -135,13 +135,14 @@ MainPage(
 
 **Побочные эффекты:** вызывает `update_config()` и записывает конфигурацию.
 
-### `_get_monitor_settings() -> tuple[str, bool, bool]`
+### `_get_monitor_settings() -> tuple[str, bool, bool, SensitivitySettings, TimerSettings]`
 
 Читает настройки, необходимые для запуска `VideoThread`.
 
-**Возвращаемое значение:** кортеж `(file_path, gaze_enabled,
-glasses_enabled)`. Отсутствующий путь превращается в пустую строку, флаги — в
-`bool`.
+**Возвращаемое значение:** кортеж `(file_path, gaze_enabled, glasses_enabled,
+sensitivity, timer_settings)`. Отсутствующий путь превращается в пустую строку,
+флаги — в `bool`, а числовые параметры конфигурации валидируются фабриками
+`SensitivitySettings.from_mapping()` и `TimerSettings.from_mapping()`.
 
 **Побочные эффекты:** вызывает `load_config()`.
 

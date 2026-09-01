@@ -21,6 +21,16 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "monitoring_settings": {
         "gaze_enabled": False,
         "glasses_enabled": False,
+        "eyes_lost_delay": 1.3,
+        "head_turned_delay": 1.0,
+        "alert_cooldown": 3.0,
+        "pause_frame_delay": 0.05,
+        "eye_open_threshold": 0.015,
+        "eye_open_with_glasses_threshold": 0.008,
+        "head_position_min_ratio": 0.35,
+        "head_position_max_ratio": 0.65,
+        "face_detection_confidence": 0.5,
+        "face_tracking_confidence": 0.5,
     },
 }
 

@@ -10,7 +10,7 @@ from script.core.path_utils import (
 from script.core.config import load_config, save_config, update_config
 from script.core.version import __version__, get_latest_version, get_lastest_verison
 
-from script.core.monitoring import VideoThread
+from script.core.monitoring import SensitivitySettings, TimerSettings, VideoThread
 
 __all__ = [
     "get_application_dir",
@@ -21,6 +21,8 @@ __all__ = [
     "load_config",
     "save_config",
     "update_config",
+    "SensitivitySettings",
+    "TimerSettings",
     "VideoThread",
     "__version__",
     "get_latest_version",

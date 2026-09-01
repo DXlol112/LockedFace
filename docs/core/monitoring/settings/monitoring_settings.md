@@ -38,6 +38,13 @@ SensitivitySettings(
 Класс объявлен с `frozen=True` и `slots=True`: поля нельзя изменять после
 создания, а произвольные новые атрибуты запрещены.
 
+### `from_mapping(values) -> SensitivitySettings`
+
+Создаёт настройки из секции `monitoring_settings` файла `config.json`.
+Нечисловые, бесконечные и выходящие за диапазон `0.0..1.0` значения заменяются
+defaults. Если нижняя граница положения головы больше верхней, обе границы
+заменяются defaults.
+
 ### Поля
 
 | Поле | Default | Где используется |
@@ -56,8 +63,8 @@ MediaPipe или файловой системе и не имеет побочн
 
 ### Исключения и валидация
 
-Автоматически проверяется только наличие известных имён полей. Диапазоны,
-порядок `min/max` и допустимость confidence не валидируются.
+Прямой конструктор dataclass принимает переданные числа без проверки.
+`from_mapping()` нормализует данные пользовательской конфигурации.
 
 ## `DEFAULT_SENSITIVITY`
 
@@ -70,12 +77,13 @@ dataclass.
 ## Поток использования
 
 ```text
-DEFAULT_SENSITIVITY
-├── VideoThread.__init__
-│   └── FaceMesh(confidence values)
-└── run_detection_checks
-    ├── is_eye_open(eye thresholds)
-    └── is_head_turned_away(head ratios)
+config["monitoring_settings"]
+└── SensitivitySettings.from_mapping
+    ├── VideoThread.__init__
+    │   └── FaceMesh(confidence values)
+    └── run_detection_checks
+        ├── is_eye_open(eye thresholds)
+        └── is_head_turned_away(head ratios)
 ```
 
 ## Как изменять чувствительность
@@ -104,10 +112,8 @@ thread = VideoThread(file, gaze, glasses, work_time, sensitivity=sensitivity)
 
 ## Текущие ограничения
 
-- Пороги заданы в коде и не загружаются из основного `config.py`.
 - Для горизонтального и вертикального положения головы используются одинаковые
   границы `min/max`.
-- Нет проверки диапазона confidence и взаимного порядка границ головы.
 - Алгоритм глаза использует только две точки на каждый глаз.
 - Индексы привязаны к топологии MediaPipe Face Mesh.
 

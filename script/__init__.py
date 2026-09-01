@@ -9,7 +9,9 @@ from script.core import (
     load_config,
     save_config,
     update_config,
-    VideoThread
+    SensitivitySettings,
+    TimerSettings,
+    VideoThread,
 )
 
 from script.UI import (
@@ -31,6 +33,8 @@ __all__ = [
     "save_config",
     "update_config",
     # Core processing
+    "SensitivitySettings",
+    "TimerSettings",
     "VideoThread",
     # UI pages
     "StartPage",

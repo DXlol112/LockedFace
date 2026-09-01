@@ -16,7 +16,14 @@ from PyQt6.QtWidgets import (
 )
 
 from script.UI.support_UI import WinDialog
-from script.core import VideoThread, __version__, load_config, update_config
+from script.core import (
+    SensitivitySettings,
+    TimerSettings,
+    VideoThread,
+    __version__,
+    load_config,
+    update_config,
+)
 
 
 class MainPage(QWidget):
@@ -182,7 +189,9 @@ class MainPage(QWidget):
     def _save_time_to_config(self) -> None:
         update_config("user_settings", work_time_seconds=self._total_seconds())
 
-    def _get_monitor_settings(self) -> tuple[str, bool, bool]:
+    def _get_monitor_settings(
+        self,
+    ) -> tuple[str, bool, bool, SensitivitySettings, TimerSettings]:
         config = load_config()
         user_settings = config["user_settings"]
         monitoring_settings = config["monitoring_settings"]
@@ -190,6 +199,8 @@ class MainPage(QWidget):
             str(user_settings.get("selected_file") or ""),
             bool(monitoring_settings.get("gaze_enabled", False)),
             bool(monitoring_settings.get("glasses_enabled", False)),
+            SensitivitySettings.from_mapping(monitoring_settings),
+            TimerSettings.from_mapping(monitoring_settings),
         )
 
     def _create_arrow(self, text: str, callback) -> QPushButton:  # type: ignore[no-untyped-def]
@@ -229,7 +240,7 @@ class MainPage(QWidget):
         self._update_time_label()
 
     def start_clicked(self) -> None:
-        file_path, _, _ = self._get_monitor_settings()
+        file_path, *_ = self._get_monitor_settings()
         errors: list[str] = []
 
         camera = cv2.VideoCapture(0)
@@ -272,8 +283,17 @@ class MainPage(QWidget):
         self.timer_widget.hide()
         self.video_widget.show()
 
-        file_path, gaze, glasses = self._get_monitor_settings()
-        self.thread = VideoThread(file_path, gaze, glasses, self._total_seconds())
+        file_path, gaze, glasses, sensitivity, timer_settings = (
+            self._get_monitor_settings()
+        )
+        self.thread = VideoThread(
+            file_path,
+            gaze,
+            glasses,
+            self._total_seconds(),
+            sensitivity,
+            timer_settings,
+        )
         self.thread.change_pixmap_signal.connect(self.update_video_image)
         self.thread.finished_signal.connect(self.on_video_finished)
         self.thread.start()
