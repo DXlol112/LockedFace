@@ -23,6 +23,7 @@ from script.core import (
     get_application_dir,
     get_latest_version,
 )
+from script.core.config import return_default_config
 from script.core.i18n import set_application_language
 from script.style.animations import RotateIconAnimation
 
@@ -30,6 +31,7 @@ from script.UI.support_UI import (
     WinDialog,
     add_action,
     add_advanced_settings,
+    add_burger_menu,
     add_input_box,
     add_mini_dropdown_menu,
     add_toggle,
@@ -62,6 +64,12 @@ class SettingsPage(QWidget):
         self.back_button.clicked.connect(self.on_back)
         header.addWidget(self.back_button)
         header.addStretch()
+        self.burger_menu, self.default_settings_action = add_burger_menu(
+            header,
+            "static/btn_icon/burger-menu.png",
+            (22, 19),
+            return_default_config,
+        )
         main_layout.addWidget(header_widget)
 
         self.scroll_area = QScrollArea()
@@ -255,6 +263,7 @@ class SettingsPage(QWidget):
         self.translations_label.setText(self.tr("Перевод"))
         self.gaze_label.setText(self.tr("Включить отслеживание глаз"))
         self.glasses_label.setText(self.tr("Наличие очков"))
+        self.default_settings_action.setText(self.tr("Настройки по умолчанию"))
         self._set_advanced_settings_text(self.tr("Дополнительные настройки"),
             self.tr("Здесь появятся дополнительные настройки."),
         )

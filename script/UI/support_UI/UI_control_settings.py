@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 
-from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import QPoint, QSize, Qt
+from PyQt6.QtGui import QAction, QIcon, QShowEvent
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -13,8 +13,10 @@ from PyQt6.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QLabel,
+    QMenu,
     QPushButton,
     QVBoxLayout,
+    QWidget,
 )
 
 from script.core import load_config, update_config
@@ -73,6 +75,44 @@ class _MiniDropdown(QComboBox):
         self._raise_overlays()
 
 
+class _BurgerMenu(QMenu):
+    """A menu kept inside the window and aligned to its anchor button."""
+
+    def __init__(self, anchor: QWidget) -> None:
+        super().__init__(anchor)
+        self._anchor = anchor
+
+    def showEvent(self, event: QShowEvent) -> None:  # type: ignore # noqa: N802
+        super().showEvent(event)
+        self.adjustSize()
+
+        window = self._anchor.window()
+        window_top_left = window.mapToGlobal(QPoint(0, 0)) # type: ignore
+        assert window is not None
+        window_bottom_right = window.mapToGlobal(
+            QPoint(window.width(), window.height())
+        )
+        anchor_top_left = self._anchor.mapToGlobal(QPoint(0, 0))
+        anchor_bottom_right = self._anchor.mapToGlobal(
+            QPoint(self._anchor.width(), self._anchor.height())
+        )
+
+        x = anchor_bottom_right.x() - self.width()
+        x = max(
+            window_top_left.x(),
+            min(x, window_bottom_right.x() - self.width()),
+        )
+
+        y = anchor_bottom_right.y()
+        if y + self.height() > window_bottom_right.y():
+            y = anchor_top_left.y() - self.height()
+        y = max(
+            window_top_left.y(),
+            min(y, window_bottom_right.y() - self.height()),
+        )
+        self.move(x, y)
+
+
 def add_action(
     layout: QVBoxLayout,
     icon_path: str,
@@ -93,6 +133,32 @@ def add_action(
     row.addWidget(button)
     layout.addLayout(row)
     return label
+
+
+def add_burger_menu(
+    layout: QHBoxLayout,
+    icon_path: str,
+    icon_size: tuple[int, int],
+    callback: Callable[[], None],
+) -> tuple[QPushButton, QAction]:
+    """Add a burger button with a single action to ``layout``."""
+    button = QPushButton()
+    button.setObjectName("burger_menu_button")
+    button.setIcon(QIcon(icon_path))
+    button.setIconSize(QSize(*icon_size))
+    button.setFixedSize(48, 48)
+
+    menu = _BurgerMenu(button)
+    menu.setObjectName("burger_menu")
+
+    action = QAction(menu)
+    action.setObjectName("default_settings_action")
+    action.triggered.connect(callback)
+    menu.addAction(action)
+
+    button.setMenu(menu)
+    layout.addWidget(button)
+    return button, action
 
 
 def add_input_box(

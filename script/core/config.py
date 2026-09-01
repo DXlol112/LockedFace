@@ -24,6 +24,11 @@ DEFAULT_CONFIG: dict[str, Any] = {
     },
 }
 
+def return_default_config() -> None:
+    """Reset only the monitoring settings to their default values."""
+    config = load_config()
+    config["monitoring_settings"] = deepcopy(DEFAULT_CONFIG["monitoring_settings"])
+    save_config(config)
 
 def load_config() -> dict[str, Any]:
     """Return a complete configuration, falling back safely on malformed data."""
